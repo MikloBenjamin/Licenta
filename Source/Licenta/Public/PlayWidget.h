@@ -5,8 +5,8 @@
 #include "CoreMinimal.h"
 #include "Components/Button.h"
 #include "Components/Image.h"
-#include "Components/HorizontalBox.h"
 #include "Components/ScaleBox.h"
+#include "Components/HorizontalBox.h"
 #include "Components/TextBlock.h"
 #include "Blueprint/UserWidget.h"
 #include "Blueprint/WidgetTree.h"
@@ -41,10 +41,10 @@ public:
 	UButton* GetEndTurnButton() const { return EndTurnButton; }
 	UButton* GetBuyButton() const { return BuyButton; }
 	UButton* GetPayButton() const { return PayButton; }
-	UButton* GetSellButton() const { return SellButton; }
+	UButton* GetPropertiesButton() const { return PropertiesButton; }
 	UButton* GetUpgradeButton() const { return UpgradeButton; }
 	UScaleBox* GetBuyScaleBox() const { return BuyScaleBox; }
-	UScaleBox* GetSellScaleBox() const { return SellScaleBox; }
+	UScaleBox* GetPropertiesScaleBox() const { return PropertiesScaleBox; }
 	UScaleBox* GetPayScaleBox() const { return PayScaleBox; }
 	UScaleBox* GetUpgradeScaleBox() const { return UpgradeScaleBox; }
 
@@ -115,7 +115,7 @@ protected:
 	UButton* PayButton;
 
 	UPROPERTY(BlueprintReadWrite, meta = (BindWidget))
-	UButton* SellButton;
+	UButton* PropertiesButton;
 
 	UPROPERTY(BlueprintReadWrite, meta = (BindWidget))
 	UButton* UpgradeButton;
@@ -124,7 +124,7 @@ protected:
 	UScaleBox* BuyScaleBox;
 
 	UPROPERTY(BlueprintReadWrite, meta = (BindWidget))
-	UScaleBox* SellScaleBox;
+	UScaleBox* PropertiesScaleBox;
 
 	UPROPERTY(BlueprintReadWrite, meta = (BindWidget))
 	UScaleBox* PayScaleBox;

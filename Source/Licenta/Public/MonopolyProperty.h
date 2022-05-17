@@ -32,15 +32,21 @@ class LICENTA_API AMonopolyProperty : public AActor
 		EType PropertyType;
 
 		UPROPERTY(BlueprintReadWrite)
-		UTexture2D* PropertyImage;
+		UTexture2D* PropertyTexture;
+
+		UPROPERTY(BlueprintReadWrite)
+		UImage* PropertyImage;
 
 		UPROPERTY(BlueprintReadWrite)
 		bool CanBeOwned;
 
+		UPROPERTY(BlueprintReadOnly)
+		int PropertyPosition;
+
 
 	public:
 		UFUNCTION(BlueprintCallable, Category="Default")
-		AMonopolyProperty* Initialize(const FString Name, const EActions Action, FString AssetPath = "", AParticipantPawn* Player = nullptr, bool IsOwnable = false);
+		AMonopolyProperty* Initialize(const int Position, const FString Name, const EActions Action, FString AssetPath = "", AParticipantPawn* Player = nullptr, bool IsOwnable = false);
 	
 		UFUNCTION(BlueprintCallable, Category="Default")
 		FString GetPropertyName() const { return PropertyName; }
@@ -52,10 +58,16 @@ class LICENTA_API AMonopolyProperty : public AActor
 		EType GetPropertyType() const { return PropertyType; }
 
 		UFUNCTION(BlueprintCallable, Category="Default")
-		UTexture2D* GetPropertyImage() const { return PropertyImage; }
+		UTexture2D* GetPropertyTexture() const { return PropertyTexture; }
+
+		UFUNCTION(BlueprintCallable, Category="Default")
+		UImage* GetPropertyImage() const { return PropertyImage; }
 	
 		UFUNCTION(BlueprintCallable, Category = "Default")
 		AParticipantPawn* GetPropertyOwner() const { return PropertyOwner; }
+
+		UFUNCTION(BlueprintCallable, Category = "Default")
+		int GetPropertyPosition() const { return PropertyPosition; }
 
 		UFUNCTION(BlueprintCallable, Category = "Default")
 		void SetPropertyOwner(AParticipantPawn* Participant) { PropertyOwner = Participant; }

@@ -5,9 +5,9 @@
 #include <Runtime/Engine/Classes/Kismet/KismetTextLibrary.h>
 
 ARailroad* ARailroad::Initialize(
-	const FString Name, const EActions Action, FString AssetPath, AParticipantPawn* Player)
+	const int Pos, const FString Name, const EActions Action, FString AssetPath, AParticipantPawn* Player)
 {
-	Super::Initialize(Name, Action, AssetPath, Player, true);
+	Super::Initialize(Pos, Name, Action, AssetPath, Player, true);
 	PropertyType = EType::Railroad;
 	return this;
 }

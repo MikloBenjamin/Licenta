@@ -3,15 +3,16 @@
 
 #include "MonopolyProperty.h"
 
-AMonopolyProperty* AMonopolyProperty::Initialize(const FString Name, const EActions Action, FString AssetPath, AParticipantPawn* Player, bool IsOwnable)
+AMonopolyProperty* AMonopolyProperty::Initialize(const int Position, const FString Name, const EActions Action, FString AssetPath, AParticipantPawn* Player, bool IsOwnable)
 {
+	PropertyPosition = Position;
 	PropertyOwner = Player;
 	PropertyName = Name;
 	PropertyAction = Action;
 
 	AssetPath = TEXT("/Game/Materials") + AssetPath;
-	PropertyImage = LoadObject<UTexture2D>(nullptr, *AssetPath);
-	// PrepareCppStructOps();
+	PropertyImage = NewObject<UImage>();
+	PropertyTexture = LoadObject<UTexture2D>(nullptr, *AssetPath);
 	CanBeOwned = IsOwnable;
 	PropertyType = EType::Default;
 	return this;

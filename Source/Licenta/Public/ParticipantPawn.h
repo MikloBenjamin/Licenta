@@ -45,6 +45,7 @@ public:
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
 	// PUBLIC BLUEPRINT FUNCTIONS -----------------------------------------------------------------
+
 	UFUNCTION(BlueprintCallable)
 	int GetPlayerPosition() const;
 
@@ -65,6 +66,13 @@ public:
 	{
 		return IsAI;
 	}
+
+	UFUNCTION(BlueprintCallable, Category = "Default")
+	bool GetRolled() const;
+
+
+	UFUNCTION(BlueprintCallable, Category = "Default")
+	void SetRolled(bool value);
 
 	// --------------------------------------------------------------------------------------------
 	// PUBLIC VARIABLES
@@ -88,4 +96,10 @@ public:
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Default")
 	int UtilitiesOwned;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Default")
+	bool Rolled;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Default")
+		UMaterial* color;
 };

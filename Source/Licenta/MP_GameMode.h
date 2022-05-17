@@ -17,8 +17,23 @@
 #include "Public/InGameWidget.h"
 #include "Public/StartGameWidget.h"
 #include "Public/PlayWidget.h"
+#include "Public/OwnedPropertiesWidget.h"
+#include "Public/BuyHouseWidget.h"
+#include "Public/PropertyHouse.h"
 #include "Blueprint/UserWidget.h"
 #include "MP_GameMode.generated.h"
+
+USTRUCT(BlueprintType)
+struct FHouses
+{
+	GENERATED_BODY()
+
+	UPROPERTY(VisibleAnywhere)
+	EPropGroups group;
+
+	UPROPERTY(VisibleAnywhere)
+	TArray<APropertyHouse*> houses;
+};
 
 /**
  * 
@@ -65,19 +80,40 @@ class LICENTA_API AMP_GameMode : public AGameModeBase
 		void HandleMoneyInfo(UMoney* PlayerMoney);
 
 		UFUNCTION(BlueprintCallable, Category = "Default")
+		void ShowPropertiesMenu();
+
+		UFUNCTION(BlueprintCallable, Category = "Default")
+		void HidePropertiesMenu();
+
+		UFUNCTION(BlueprintCallable, Category = "Default")
+		void ShowSameGroupMenu();
+
+		UFUNCTION(BlueprintCallable, Category = "Default")
+		void HideSameGroupMenu();
+
+		UFUNCTION(BlueprintCallable, Category = "Default")
 		void BuyProperty();
 
 		UFUNCTION(BlueprintCallable, Category = "Default")
-		void SellProperty();
+		void SellProperty(const int Position);
 
 		UFUNCTION(BlueprintCallable, Category="Default")
 		int Pay(const int Amount);
+
+		UFUNCTION(BlueprintCallable, Category = "Default")
+		bool UpgradePossible(AMonopolyProperty* Property, AParticipantPawn* Participant);
+
+		UFUNCTION(BlueprintCallable, Category = "Default")
+		void UpgradeProperty(AMonopolyProperty* Property = nullptr);
 
 		UFUNCTION(BlueprintCallable, Category="Default")
 		AParticipantPawn* GetParticipant();
 	
 		UFUNCTION(BlueprintCallable, Category="Default")
 		AMonopolyProperty* GetProperty(const int Position);
+
+		UFUNCTION(BlueprintCallable, Category = "Default")
+		void CHEAT();
 
 		// GAMEMODE PROPERTIES
 		
@@ -104,11 +140,21 @@ class LICENTA_API AMP_GameMode : public AGameModeBase
 
 		UPROPERTY(BlueprintReadWrite)
 		UStartGameWidget* StartMenu;
+
+		UPROPERTY(BlueprintReadWrite)
+		UOwnedPropertiesWidget* OwnedPropertiesMenu;
+
+		UPROPERTY(BlueprintReadWrite)
+		UBuyHouseWidget* BuyHouseMenu;
 	
 		UPROPERTY(BlueprintReadOnly)
 		int PlayerTurn;
+
+		UPROPERTY(BlueprintReadWrite)
+		TMap<int, FHouses> Houses;
 	private:
 		int LastDiceRolled;
 
+		void GenerateHouses();
 		void HandleOwnedProperty(AMonopolyProperty* Property, AParticipantPawn* Participant);
 };

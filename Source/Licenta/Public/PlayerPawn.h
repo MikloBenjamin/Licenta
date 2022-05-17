@@ -26,5 +26,12 @@ public:
 	
 	UFUNCTION(BlueprintCallable, Category="Default")
 	int Play();
+
+	UFUNCTION(BlueprintCallable)
+	void CheatMove()
+	{
+		MoveCamera();
+		MovePawn(1);
+	}
 	
 };

@@ -15,7 +15,7 @@ class LICENTA_API ARailroad : public AMonopolyProperty
 	GENERATED_BODY()
 public:
 	ARailroad* Initialize(
-		const FString Name, const EActions Action, FString AssetPath = "", AParticipantPawn* Player = nullptr);
+		const int Pos, const FString Name, const EActions Action, FString AssetPath = "", AParticipantPawn* Player = nullptr);
 
 	FString PriceToPay(AParticipantPawn* PropertyOwnerParticipant);
 

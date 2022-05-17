@@ -33,8 +33,11 @@ AParticipantPawn::AParticipantPawn()
 
 void AParticipantPawn::Initialize(FString PartName, UStaticMesh* StaticMesh, UMaterial* Material)
 {
+	color = Material;
 	StaticMesh->SetMaterial(0, Material);
 	RComponent->SetStaticMesh(StaticMesh);
+	RComponent->SetWorldScale3D(FVector(1, 1, 2));
+	RComponent->SetRelativeScale3D(FVector(1, 1, 2));
 	ParticipantName = PartName;
 	Money = NewObject<UMoney>(this, TEXT("Money"));
 	Money->PrepareCppStructOps();
@@ -149,6 +152,16 @@ void AParticipantPawn::MovePawn(const int MoveBy)
 	}
 	SetActorLocation(PlayerPosition);
 	if (!IsAI) MoveCamera();
+}
+
+void AParticipantPawn::SetRolled(bool value)
+{
+	Rolled = value;
+}
+
+bool AParticipantPawn::GetRolled() const
+{
+	return Rolled;
 }
 
 int AParticipantPawn::Pay(const int Amount)

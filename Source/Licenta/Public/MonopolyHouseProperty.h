@@ -24,11 +24,14 @@ class LICENTA_API AMonopolyHouseProperty : public AMonopolyProperty
 		UPROPERTY(BlueprintReadOnly)
 		int Houses;
 
+		UPROPERTY(BlueprintReadOnly)
+		EPropGroups PropGroup;
+
 	public:
 		AMonopolyHouseProperty* Initialize(
-			const FString Name, const EActions Action, FString AssetPath = "",
+			const int Pos, const FString Name, const EActions Action, FString AssetPath = "",
 			AParticipantPawn* Player = nullptr, FBuyPrice Buy = FBuyPrice{0,0},
-			FPayPrice Pay = FPayPrice{0,0, 0, 0, 0, 0});
+			FPayPrice Pay = FPayPrice{0,0, 0, 0, 0, 0}, EPropGroups group = EPropGroups::Brown);
 
 		FString PriceToPay(AParticipantPawn* Participant);
 
@@ -39,4 +42,10 @@ class LICENTA_API AMonopolyHouseProperty : public AMonopolyProperty
 		FString UpgradePrice();
 
 		void ResetInit();
+
+		UFUNCTION(BlueprintCallable, Category = "Default")
+		void BuyHouse();
+
+		UFUNCTION(BlueprintCallable, Category = "Default")
+		EPropGroups GetPropGroup() const { return PropGroup; }
 };

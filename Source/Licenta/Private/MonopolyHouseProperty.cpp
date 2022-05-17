@@ -5,14 +5,15 @@
 #include <Runtime/Engine/Classes/Kismet/KismetTextLibrary.h>
 
 AMonopolyHouseProperty* AMonopolyHouseProperty::Initialize(
-	const FString Name, const EActions Action, FString AssetPath,
-	AParticipantPawn* Player, FBuyPrice Buy, FPayPrice Pay)
+	const int Pos, const FString Name, const EActions Action, FString AssetPath,
+	AParticipantPawn* Player, FBuyPrice Buy, FPayPrice Pay, EPropGroups group)
 {
-	Super::Initialize(Name, Action, AssetPath, Player, true);
+	Super::Initialize(Pos, Name, Action, AssetPath, Player, true);
 	BuyPrice = Buy;
 	PayPrice = Pay;
 	Houses = 0;
 	PropertyType = EType::Property;
+	PropGroup = group;
 	return this;
 }
 
@@ -40,6 +41,11 @@ FString AMonopolyHouseProperty::PriceToPay(AParticipantPawn* Participant)
 		ToPay = PayPrice.Initial;
 	}
 	return UKismetTextLibrary::Conv_TextToString(UKismetTextLibrary::Conv_IntToText(ToPay));
+}
+
+void AMonopolyHouseProperty::BuyHouse()
+{
+	Houses++;
 }
 
 FString AMonopolyHouseProperty::UpgradePrice()
