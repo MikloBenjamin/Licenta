@@ -5,7 +5,7 @@
 #include "CoreMinimal.h"
 
 #include "ParticipantPawn.h"
-#include "Actions.h"
+#include "Common/Actions.h"
 #include "Components/Image.h"
 
 #include "MonopolyProperty.generated.h"
@@ -42,8 +42,6 @@ class LICENTA_API AMonopolyProperty : public AActor
 
 		UPROPERTY(BlueprintReadOnly)
 		int PropertyPosition;
-
-
 	public:
 		UFUNCTION(BlueprintCallable, Category="Default")
 		AMonopolyProperty* Initialize(const int Position, const FString Name, const EActions Action, FString AssetPath = "", AParticipantPawn* Player = nullptr, bool IsOwnable = false);

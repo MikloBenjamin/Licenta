@@ -29,6 +29,7 @@ AParticipantPawn::AParticipantPawn()
 
 	RailroadsOwned = 0;
 	UtilitiesOwned = 0;
+	Card = nullptr;
 }
 
 void AParticipantPawn::Initialize(FString PartName, UStaticMesh* StaticMesh, UMaterial* Material)
@@ -58,11 +59,26 @@ void AParticipantPawn::BeginPlay()
 	
 }
 
-// Called every frame
 void AParticipantPawn::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
+	if (WaitTime > 0)
+	{
+		WaitTime -= DeltaTime;
+		return;
+	}
+
+	if (Destinations.Num() > 0)
+	{
+		if (Destinations[0] != GetActorLocation())
+		{
+			SetActorLocation(FMath::Lerp(GetActorLocation(), Destinations[0], 1));
+			Destinations.RemoveAt(0);
+			WaitTime = 0.21;
+			MoveCamera();
+		}
+	}
 }
 
 // Called to bind functionality to input
@@ -78,6 +94,10 @@ void AParticipantPawn::RestrainPosition()
 	if (Position > 39)
 	{
 		Position -= 40;
+		if (JailedFor == 0)
+		{
+			Receive(25);
+		}
 	}
 	else if (Position < 0)
 	{
@@ -130,6 +150,11 @@ void AParticipantPawn::MoveCamera()
 void AParticipantPawn::MovePawn(const int MoveBy)
 {
 	FVector PlayerPosition = GetActorLocation();
+	if (Destinations.Num() > 0)
+	{
+		PlayerPosition = Destinations.Last();
+	}
+
 	for(int Itr = 0; Itr < MoveBy; Itr++)
 	{
 		if (Position < 10)
@@ -149,9 +174,13 @@ void AParticipantPawn::MovePawn(const int MoveBy)
 			PlayerPosition += FVector(0, 400, 0);
 		}
 		RestrainPosition();
+		Destinations.Add(PlayerPosition);
 	}
-	SetActorLocation(PlayerPosition);
-	if (!IsAI) MoveCamera();
+}
+
+void AParticipantPawn::Move(int positions)
+{
+	MovePawn(positions);
 }
 
 void AParticipantPawn::SetRolled(bool value)
@@ -164,9 +193,14 @@ bool AParticipantPawn::GetRolled() const
 	return Rolled;
 }
 
-int AParticipantPawn::Pay(const int Amount)
+int AParticipantPawn::Pay(const int Amount, AParticipantPawn* To)
 {
-	return Money->Calculate(Amount);
+	int RestP = Money->Calculate(Amount);
+	if (To)
+	{
+		To->Receive(Amount - RestP);
+	}
+	return RestP;
 }
 
 int AParticipantPawn::GetPlayerPosition() const
@@ -180,5 +214,24 @@ UMoney* AParticipantPawn::GetMoney() const
 }
 
 int AParticipantPawn::Receive(int Amount) {
-	return Money->Increase(Amount);
+	int result = Money->Increase(Amount);
+	return result;
+}
+// GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, TEXT("This is an on screen message!"));
+
+int AParticipantPawn::Play()
+{
+	int DiceRoll = FMath::RandRange(1, 6) + FMath::RandRange(1, 6);
+	if (DiceRoll == 12)
+	{
+		JailedFor = 0;
+	}
+	else if (JailedFor > 3)
+	{
+		JailedFor--;
+		return DiceRoll;
+	}
+	MoveCamera();
+	MovePawn(DiceRoll);
+	return DiceRoll;
 }

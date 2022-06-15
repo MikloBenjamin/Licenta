@@ -3,7 +3,10 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "PropertyHouse.h"
 #include "Actions.generated.h"
+
+class AMonopolyProperty;
 
 UENUM(BlueprintType)
 enum class EActions : uint8
@@ -12,10 +15,7 @@ enum class EActions : uint8
 	Start,
 	GoToJail,
 	Property,
-	RailroadN,
-	RailroadS,
-	RailroadE,
-	RailroadW,
+	Railroad,
 	Utility,
 	Treasure,
 	Mystery,
@@ -93,4 +93,34 @@ struct FPayPrice
 	
 	UPROPERTY(BlueprintReadOnly)
 	int Hotel;
+};
+
+USTRUCT(BlueprintType)
+struct FHouses
+{
+	GENERATED_BODY()
+
+	UPROPERTY(VisibleAnywhere)
+	EPropGroups group;
+
+	UPROPERTY(VisibleAnywhere)
+	TArray<APropertyHouse*> houses;
+};
+
+USTRUCT(BlueprintType)
+struct FOffer
+{
+	GENERATED_BODY()
+
+	UPROPERTY(VisibleAnywhere)
+		int P1ReceivesMoney = 0;
+
+	UPROPERTY(VisibleAnywhere)
+		int P2ReceivesMoney = 0;
+
+	UPROPERTY(VisibleAnywhere)
+		TArray<AMonopolyProperty*> P1Receives;
+
+	UPROPERTY(VisibleAnywhere)
+		TArray<AMonopolyProperty*> P2Receives;
 };

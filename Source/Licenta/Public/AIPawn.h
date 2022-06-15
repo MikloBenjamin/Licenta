@@ -26,6 +26,5 @@ public:
 	virtual void Tick(float DeltaTime) override;
 
 	// PUBLIC BLUEPRINT FUNCTIONS
-	UFUNCTION(BlueprintCallable, Category="Default")
-	int Play();
+	//virtual int Play() override;
 };

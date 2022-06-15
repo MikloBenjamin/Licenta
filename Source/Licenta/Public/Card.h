@@ -3,10 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "GameFramework/Actor.h"
-
-#include "Actions.h"
-
+#include "Common/Actions.h"
 #include "Card.generated.h"
 
 UCLASS()

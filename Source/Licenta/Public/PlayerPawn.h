@@ -24,8 +24,7 @@ public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 	
-	UFUNCTION(BlueprintCallable, Category="Default")
-	int Play();
+	//virtual int Play() override;
 
 	UFUNCTION(BlueprintCallable)
 	void CheatMove()

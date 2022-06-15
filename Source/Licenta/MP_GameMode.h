@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/GameModeBase.h"
+#include "Algo/Rotate.h"
 #include "Public/MonopolyProperty.h"
 #include "Public/ParticipantPawn.h"
 #include "Public/MonopolyHouseProperty.h"
@@ -11,29 +12,20 @@
 #include "Public/Railroad.h"
 #include "Public/SecretCard.h"
 #include "Public/ElectricAndWaterWorks.h"
-#include "Public/Actions.h"
 #include "Public/Card.h"
-#include "Public/InitialWidget.h"
-#include "Public/InGameWidget.h"
-#include "Public/StartGameWidget.h"
-#include "Public/PlayWidget.h"
-#include "Public/OwnedPropertiesWidget.h"
-#include "Public/BuyHouseWidget.h"
+#include "Public/Widgets/InitialWidget.h"
+#include "Public/Widgets/InGameWidget.h"
+#include "Public/Widgets/StartGameWidget.h"
+#include "Public/Widgets/PlayWidget.h"
+#include "Public/Widgets/OwnedPropertiesWidget.h"
+#include "Public/Widgets/OwnedPropsPayRestWidget.h"
+#include "Public/Widgets/BuyHouseWidget.h"
+#include "Public/Widgets/CardsWidget.h"
 #include "Public/PropertyHouse.h"
 #include "Blueprint/UserWidget.h"
+#include "Kismet/KismetArrayLibrary.h"
 #include "MP_GameMode.generated.h"
 
-USTRUCT(BlueprintType)
-struct FHouses
-{
-	GENERATED_BODY()
-
-	UPROPERTY(VisibleAnywhere)
-	EPropGroups group;
-
-	UPROPERTY(VisibleAnywhere)
-	TArray<APropertyHouse*> houses;
-};
 
 /**
  * 
@@ -45,15 +37,62 @@ class LICENTA_API AMP_GameMode : public AGameModeBase
 	protected:
 		// Called when the game starts or when spawned
 		virtual void BeginPlay() override;
+		virtual void Tick(float DeltaSeconds) override;
+		virtual void EndPlay(EEndPlayReason::Type EndPlayReason) override;
 	public:
+		UFUNCTION(BlueprintCallable, Category = "Default")
+		void PayRest(AParticipantPawn* Player, int Rest, AParticipantPawn* Receiver = nullptr);
+
+		UFUNCTION(BlueprintCallable, Category = "Default")
+		void HandleRest(AParticipantPawn* Player, int Rest, AParticipantPawn* Receiver = nullptr);
+
 		UFUNCTION(BlueprintCallable, Category="Default")
 		void Initialize();
+
+		UFUNCTION(BlueprintCallable, Category = "Default")
+		void ClearRoundTimer();
+
+		UFUNCTION(BlueprintCallable, Category = "Default")
+		void SetRoundTimer();
+
+		UFUNCTION(BlueprintCallable, Category = "Default")
+		void ClearDiceRollTimer();
+
+		UFUNCTION(BlueprintCallable, Category = "Default")
+		void SetDiceRollTimer();
+
+		UFUNCTION(BlueprintCallable, Category = "Default")
+		void ClearRollDiceAnimationTimer();
+
+		UFUNCTION(BlueprintCallable, Category = "Default")
+		void SetRollDiceAnimationTimer();
+
+		UFUNCTION(BlueprintCallable, Category = "Default")
+		void ClearUseCardTimer();
+
+		UFUNCTION(BlueprintCallable, Category = "Default")
+		void SetUseCardTimer();
+
+		UFUNCTION(BlueprintCallable, Category = "Default")
+		void ClearSellForRestTimer();
+
+		UFUNCTION(BlueprintCallable, Category = "Default")
+		void SetSellRestTimer();
+
+		UFUNCTION(BlueprintImplementableEvent, Category = "Default")
+		void SetSellForRestTimer(AParticipantPawn* Player, int Rest);
+
+		UFUNCTION(BlueprintCallable, Category = "Default")
+		void ContinuePay();
 
 		UFUNCTION(BlueprintCallable, Category = "Default")
 		void GeneratePlayers(APlayerController* PlayerController, TArray<UStaticMesh*> StaticMeshList, TArray<UMaterial*> Materials);
 
 		UFUNCTION(BlueprintCallable, Category = "Default")
 		void StartGame(APlayerController* PlayerController, TArray<UStaticMesh*> StaticMeshList, TArray<UMaterial*> Materials);
+
+		UFUNCTION(BlueprintCallable, Category = "Default")
+		void NextPlayer();
 
 		UFUNCTION(BlueprintCallable, Category="Default")
 		void NextPlayerTurn();
@@ -63,6 +102,12 @@ class LICENTA_API AMP_GameMode : public AGameModeBase
 	
 		UFUNCTION(BlueprintCallable, Category="Default")
 		AMonopolyProperty* ExecutePlayerTurn();
+	
+		UFUNCTION(BlueprintCallable, Category = "Default")
+		void HandleProperty(AMonopolyProperty* Property);
+	
+		UFUNCTION(BlueprintCallable, Category = "Default")
+		void UseCard(TArray<ACard*>& Cards);
 	
 		UFUNCTION(BlueprintCallable, Category = "Default")
 		void HandleShowStartMenu();
@@ -92,10 +137,10 @@ class LICENTA_API AMP_GameMode : public AGameModeBase
 		void HideSameGroupMenu();
 
 		UFUNCTION(BlueprintCallable, Category = "Default")
-		void BuyProperty();
+		void BuyProperty(AMonopolyProperty* Property = nullptr, AParticipantPawn* Player = nullptr);
 
 		UFUNCTION(BlueprintCallable, Category = "Default")
-		void SellProperty(const int Position);
+		void SellProperty(const int Position, AParticipantPawn* Player = nullptr);
 
 		UFUNCTION(BlueprintCallable, Category="Default")
 		int Pay(const int Amount);
@@ -106,6 +151,9 @@ class LICENTA_API AMP_GameMode : public AGameModeBase
 		UFUNCTION(BlueprintCallable, Category = "Default")
 		void UpgradeProperty(AMonopolyProperty* Property = nullptr);
 
+		UFUNCTION(BlueprintCallable, Category = "Default")
+		void SellHouse(AMonopolyProperty* Property = nullptr, AParticipantPawn* Player = nullptr);
+
 		UFUNCTION(BlueprintCallable, Category="Default")
 		AParticipantPawn* GetParticipant();
 	
@@ -114,6 +162,20 @@ class LICENTA_API AMP_GameMode : public AGameModeBase
 
 		UFUNCTION(BlueprintCallable, Category = "Default")
 		void CHEAT();
+
+		UFUNCTION(BlueprintCallable, Category = "Default")
+		void CalculateCanBuySellHouseOrProperty();
+
+		UFUNCTION(BlueprintCallable, Category = "Default")
+		void OfferTrade(
+			AParticipantPawn* Player1,
+			AParticipantPawn* Player2,
+			FOffer offer
+		);
+
+
+		UFUNCTION(BlueprintCallable, Category = "Default")
+		void HandleBotAI(AParticipantPawn* Player, AMonopolyProperty* Property);
 
 		// GAMEMODE PROPERTIES
 		
@@ -145,6 +207,9 @@ class LICENTA_API AMP_GameMode : public AGameModeBase
 		UOwnedPropertiesWidget* OwnedPropertiesMenu;
 
 		UPROPERTY(BlueprintReadWrite)
+		UOwnedPropsPayRestWidget* PayRestMenu;
+
+		UPROPERTY(BlueprintReadWrite)
 		UBuyHouseWidget* BuyHouseMenu;
 	
 		UPROPERTY(BlueprintReadOnly)
@@ -152,8 +217,15 @@ class LICENTA_API AMP_GameMode : public AGameModeBase
 
 		UPROPERTY(BlueprintReadWrite)
 		TMap<int, FHouses> Houses;
+
+		FTimerHandle RoundTimer;
+		FTimerHandle DiceRollTimer;
+		FTimerHandle RollDiceAnimationTimer;
+		FTimerHandle UseCardTimer;
+		FTimerHandle SellForRestTimer;
 	private:
 		int LastDiceRolled;
+		bool Initialized = false;
 
 		void GenerateHouses();
 		void HandleOwnedProperty(AMonopolyProperty* Property, AParticipantPawn* Participant);

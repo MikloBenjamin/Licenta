@@ -22,12 +22,21 @@ void APlayerPawn::Tick(float DeltaTime)
 	Super::Tick(DeltaTime);
 }
 
-int APlayerPawn::Play()
+/*int APlayerPawn::Play()
 {
 	int DiceRoll = FMath::RandRange(1, 6) + FMath::RandRange(1, 6);
+	if (DiceRoll == 12)
+	{
+		JailedFor = 0;
+	}
+	else if (JailedFor > 3)
+	{
+		JailedFor--;
+		return DiceRoll;
+	}
 	MoveCamera();
 	MovePawn(DiceRoll);
 	return DiceRoll;
-}
+}*/
 
 

@@ -1,12 +1,9 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 
-#include "PlayWidget.h"
+#include "Widgets/InGameWidget.h"
 
-void UPlayWidget::NativeConstruct()
+void UInGameWidget::NativeConstruct()
 {
     Super::NativeConstruct();
 }
-
-
-

@@ -3,11 +3,10 @@
 #pragma once
 
 #include "CoreMinimal.h"
-
-#include "ParticipantPawn.h"
-#include "Engine/StaticMesh.h"
 #include "Engine/StaticMeshActor.h"
 #include "PropertyHouse.generated.h"
+
+class AParticipantPawn;
 
 /**
  * 

@@ -262,5 +262,5 @@ int UMoney::CalcRest(int ToPay){
     if(ToPay > 0){
         return Initial - ToPay;
     }
-    return Initial;
+    return ToPay;
 }

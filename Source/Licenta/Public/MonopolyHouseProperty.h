@@ -41,11 +41,25 @@ class LICENTA_API AMonopolyHouseProperty : public AMonopolyProperty
 
 		FString UpgradePrice();
 
+		int GetHouses() const { return Houses; }
+
 		void ResetInit();
 
 		UFUNCTION(BlueprintCallable, Category = "Default")
 		void BuyHouse();
 
 		UFUNCTION(BlueprintCallable, Category = "Default")
+		void SellHouse();
+
+		UFUNCTION(BlueprintCallable, Category = "Default")
 		EPropGroups GetPropGroup() const { return PropGroup; }
+
+		UPROPERTY(BlueprintReadWrite)
+			bool CanBuyHouse = false;
+
+		UPROPERTY(BlueprintReadWrite)
+			bool CanSellHouse = false;
+
+		UPROPERTY(BlueprintReadWrite)
+			bool CanSellProperty = false;
 };

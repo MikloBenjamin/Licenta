@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "Money.h"
+#include "Card.h"
 #include "Camera/CameraComponent.h"
 #include "GameFramework/Pawn.h"
 #include "GameFramework/SpringArmComponent.h"
@@ -19,15 +20,22 @@ public:
 	// CONSTRUCTORS
 	AParticipantPawn();
 
+	UFUNCTION(BlueprintCallable, Category = "Default")
+	virtual int Play();
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Default")
+	int Rest = 0;
+
 protected:
 	// PROTECTED NON-BP FUNCTIONS
 	virtual void BeginPlay() override;
+
 	void RestrainPosition();
 	
 	// PROTECTED BLUEPRINT FUNCTIONS
 	UFUNCTION(BlueprintCallable)
 	FRotator GetCameraDestinationPosition();
-	
+
 	UFUNCTION(BlueprintCallable)
 	void MoveCamera();
 	
@@ -37,14 +45,19 @@ protected:
 	// PROTECTED VARIABLES
 	int Position = 0;
 	bool IsAI = false;
+	TArray<FVector> Destinations;
+	float WaitTime = 0.21;
 
 public:
+	int JailedFor = 0;
 	// PUBLIC NON-BP FUNCTIONS
 	
 	virtual void Tick(float DeltaTime) override;
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
 	// PUBLIC BLUEPRINT FUNCTIONS -----------------------------------------------------------------
+	UFUNCTION(BlueprintCallable)
+	void Move(int positions);
 
 	UFUNCTION(BlueprintCallable)
 	int GetPlayerPosition() const;
@@ -53,7 +66,7 @@ public:
 	UMoney* GetMoney() const;
 
 	UFUNCTION(BlueprintCallable, Category="Default")
-	int Pay(const int Amount);
+	int Pay(const int Amount, AParticipantPawn* To = nullptr);
 
 	UFUNCTION(BlueprintCallable, Category="Default")
 	int Receive(const int Amount);
@@ -101,5 +114,8 @@ public:
 	bool Rolled;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Default")
-		UMaterial* color;
+	UMaterial* color;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Default")
+	ACard* Card;
 };

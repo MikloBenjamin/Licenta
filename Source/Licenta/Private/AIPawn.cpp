@@ -26,11 +26,11 @@ void AAIPawn::Tick(float DeltaTime)
 
 }
 
-int AAIPawn::Play()
+/*int AAIPawn::Play()
 {
 	int DiceRoll = FMath::RandRange(1, 6) + FMath::RandRange(1, 6);
 	MoveCamera();
 	MovePawn(DiceRoll);
 	return DiceRoll;
-}
+}*/
 

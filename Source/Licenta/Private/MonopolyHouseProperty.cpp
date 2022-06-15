@@ -48,6 +48,11 @@ void AMonopolyHouseProperty::BuyHouse()
 	Houses++;
 }
 
+void AMonopolyHouseProperty::SellHouse()
+{
+	Houses--;
+}
+
 FString AMonopolyHouseProperty::UpgradePrice()
 {
 	return UKismetTextLibrary::Conv_TextToString(UKismetTextLibrary::Conv_IntToText(BuyPrice.House));

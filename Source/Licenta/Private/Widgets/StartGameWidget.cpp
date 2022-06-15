@@ -1,10 +1,11 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 
-#include "InitialWidget.h"
+#include "Widgets/StartGameWidget.h"
 
-void UInitialWidget::NativeConstruct()
+void UStartGameWidget::NativeConstruct()
 {
     Super::NativeConstruct();
+
 }
 

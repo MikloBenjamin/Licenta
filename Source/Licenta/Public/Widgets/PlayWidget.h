@@ -8,6 +8,9 @@
 #include "Components/ScaleBox.h"
 #include "Components/HorizontalBox.h"
 #include "Components/TextBlock.h"
+#include "Components/Overlay.h"
+#include "MediaPlayer.h"
+#include "MediaTexture.h"
 #include "Blueprint/UserWidget.h"
 #include "Blueprint/WidgetTree.h"
 #include "PlayWidget.generated.h"
@@ -21,6 +24,7 @@ class LICENTA_API UPlayWidget : public UUserWidget
 	GENERATED_BODY()
 public:
 	UHorizontalBox* GetPropertyInfo() const { return PropertyInfo; }
+	UHorizontalBox* GetButtons() const { return Buttons; }
 	UImage* GetPropertyImage() const { return PropertyImage; }
 	UImage* GetPropertyOverlayImage() const { return PropertyInfoOverlay; }
 	UTextBlock* GetPrice() const { return Price; }
@@ -47,6 +51,12 @@ public:
 	UScaleBox* GetPropertiesScaleBox() const { return PropertiesScaleBox; }
 	UScaleBox* GetPayScaleBox() const { return PayScaleBox; }
 	UScaleBox* GetUpgradeScaleBox() const { return UpgradeScaleBox; }
+	UTextBlock* GetCardInfo() const { return CardInfo; }
+	UImage* GetInfoBackground() const { return InfoBackground; }
+	UOverlay* GetCardInfoOverlay() const { return CardInfoOverlay; }
+	UOverlay* GetMediaOverlay() const { return MediaOverlay; }
+	UMediaPlayer* GetDiceRollMediaPlayer() const { return DiceRollMediaPlayer; }
+	UMediaSource* GetDiceRollSource() const { return DiceRollSource; }
 
 protected:
 	virtual void NativeConstruct() override;
@@ -59,6 +69,9 @@ protected:
 
 	UPROPERTY(BlueprintReadWrite, meta = (BindWidget))
 	UHorizontalBox* PropertyInfo;
+
+	UPROPERTY(BlueprintReadWrite, meta = (BindWidget))
+	UHorizontalBox* Buttons;
 
 	UPROPERTY(BlueprintReadWrite, meta = (BindWidget))
 	UTextBlock* Price;
@@ -131,4 +144,25 @@ protected:
 
 	UPROPERTY(BlueprintReadWrite, meta = (BindWidget))
 	UScaleBox* UpgradeScaleBox;
+
+	UPROPERTY(BlueprintReadWrite, meta = (BindWidget))
+	UTextBlock* CardInfo;
+
+	UPROPERTY(BlueprintReadWrite, meta = (BindWidget))
+	UImage* InfoBackground;
+
+	UPROPERTY(BlueprintReadWrite, meta = (BindWidget))
+	UOverlay* CardInfoOverlay;
+
+	UPROPERTY(BlueprintReadWrite, meta = (BindWidget))
+	UImage* MediaImage;
+
+	UPROPERTY(BlueprintReadWrite, meta = (BindWidget))
+	UOverlay* MediaOverlay;
+
+	UPROPERTY(BlueprintReadWrite, meta = (BindWidgetOptional))
+	UMediaPlayer* DiceRollMediaPlayer;
+
+	UPROPERTY(BlueprintReadWrite, meta = (BindWidgetOptional))
+	UMediaSource* DiceRollSource;
 };
