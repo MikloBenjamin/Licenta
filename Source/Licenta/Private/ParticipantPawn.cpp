@@ -23,7 +23,7 @@ AParticipantPawn::AParticipantPawn()
 	
 	SArm->bEnableCameraLag = true;
 	SArm->TargetArmLength = 1500.0f;
-	SArm->CameraLagSpeed = 3.0f;
+	//SArm->CameraLagSpeed = 3.0f;
 	SArm->SetRelativeLocation(FVector(25, 25, 50));
 	SetRootComponent(RComponent);
 
@@ -50,6 +50,7 @@ void AParticipantPawn::Initialize(FString PartName, UStaticMesh* StaticMesh, UMa
 	{
 		RComponent->SetCollisionResponseToChannels(ECollisionResponse::ECR_Overlap);
 	}
+	Card = nullptr;
 }
 
 // Called when the game starts or when spawned
@@ -200,6 +201,7 @@ int AParticipantPawn::Pay(const int Amount, AParticipantPawn* To)
 	{
 		To->Receive(Amount - RestP);
 	}
+	Rest = RestP;
 	return RestP;
 }
 

@@ -21,7 +21,10 @@
 #include "Public/Widgets/OwnedPropsPayRestWidget.h"
 #include "Public/Widgets/BuyHouseWidget.h"
 #include "Public/Widgets/CardsWidget.h"
+#include "Public/Widgets/GameOverWidget.h"
 #include "Public/PropertyHouse.h"
+#include "Misc/FileHelper.h"
+#include "Misc/Paths.h"
 #include "Blueprint/UserWidget.h"
 #include "Kismet/KismetArrayLibrary.h"
 #include "MP_GameMode.generated.h"
@@ -34,11 +37,15 @@ UCLASS()
 class LICENTA_API AMP_GameMode : public AGameModeBase
 {
 	GENERATED_BODY()
+	private:
+		void Log(FString log);
 	protected:
 		// Called when the game starts or when spawned
 		virtual void BeginPlay() override;
 		virtual void Tick(float DeltaSeconds) override;
 		virtual void EndPlay(EEndPlayReason::Type EndPlayReason) override;
+		FString FilePath = FPaths::ConvertRelativePathToFull(FPaths::GameSourceDir()) + TEXT("/DebugLogs.log");
+		int ScreenDebugKey = 123456;
 	public:
 		UFUNCTION(BlueprintCallable, Category = "Default")
 		void PayRest(AParticipantPawn* Player, int Rest, AParticipantPawn* Receiver = nullptr);
@@ -80,7 +87,16 @@ class LICENTA_API AMP_GameMode : public AGameModeBase
 		void SetSellRestTimer();
 
 		UFUNCTION(BlueprintImplementableEvent, Category = "Default")
-		void SetSellForRestTimer(AParticipantPawn* Player, int Rest);
+		void BindPayRestButtons();
+
+		UFUNCTION(BlueprintImplementableEvent, Category = "Default")
+		void PlayDiceRollSound();
+
+		UFUNCTION(BlueprintImplementableEvent, Category = "Default")
+		void GenerateTilesForRestWidget();
+
+		UFUNCTION(BlueprintCallable, Category = "Default")
+		void RecalculateRestInformation();
 
 		UFUNCTION(BlueprintCallable, Category = "Default")
 		void ContinuePay();
@@ -104,7 +120,7 @@ class LICENTA_API AMP_GameMode : public AGameModeBase
 		AMonopolyProperty* ExecutePlayerTurn();
 	
 		UFUNCTION(BlueprintCallable, Category = "Default")
-		void HandleProperty(AMonopolyProperty* Property);
+		void HandleProperty(AMonopolyProperty* Property, AParticipantPawn* Player = nullptr);
 	
 		UFUNCTION(BlueprintCallable, Category = "Default")
 		void UseCard(TArray<ACard*>& Cards);
@@ -149,7 +165,10 @@ class LICENTA_API AMP_GameMode : public AGameModeBase
 		bool UpgradePossible(AMonopolyProperty* Property, AParticipantPawn* Participant);
 
 		UFUNCTION(BlueprintCallable, Category = "Default")
-		void UpgradeProperty(AMonopolyProperty* Property = nullptr);
+		bool DegradePossible(AMonopolyProperty* Property, AParticipantPawn* Participant);
+
+		UFUNCTION(BlueprintCallable, Category = "Default")
+		void UpgradeProperty(AMonopolyProperty* Property = nullptr, AParticipantPawn* Player = nullptr);
 
 		UFUNCTION(BlueprintCallable, Category = "Default")
 		void SellHouse(AMonopolyProperty* Property = nullptr, AParticipantPawn* Player = nullptr);
@@ -173,6 +192,20 @@ class LICENTA_API AMP_GameMode : public AGameModeBase
 			FOffer offer
 		);
 
+		UFUNCTION(BlueprintCallable, Category = "Default")
+		void SellUnnecesaryPropertiesAndBuyProperty(AParticipantPawn* Player, AMonopolyProperty* Property);
+
+		UFUNCTION(BlueprintCallable, Category = "Default")
+		void BuyHouseAI(AParticipantPawn* Player, AMonopolyProperty* Property);
+
+		UFUNCTION(BlueprintCallable, Category = "Default")
+		void BuyPropertyAI(AParticipantPawn* Player, AMonopolyProperty* Property);
+
+		UFUNCTION(BlueprintCallable, Category = "Default")
+		void BuyRailroadAI(AParticipantPawn* Player, AMonopolyProperty* Property);
+
+		UFUNCTION(BlueprintCallable, Category = "Default")
+		void BuyElectricAI(AParticipantPawn* Player, AMonopolyProperty* Property);
 
 		UFUNCTION(BlueprintCallable, Category = "Default")
 		void HandleBotAI(AParticipantPawn* Player, AMonopolyProperty* Property);
@@ -211,6 +244,9 @@ class LICENTA_API AMP_GameMode : public AGameModeBase
 
 		UPROPERTY(BlueprintReadWrite)
 		UBuyHouseWidget* BuyHouseMenu;
+
+		UPROPERTY(BlueprintReadWrite)
+		UGameOverWidget* GameOverMenu;
 	
 		UPROPERTY(BlueprintReadOnly)
 		int PlayerTurn;

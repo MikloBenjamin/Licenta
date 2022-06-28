@@ -31,181 +31,9 @@ void AMP_GameMode::EndPlay(EEndPlayReason::Type EndPlayReason)
 	Super::EndPlay(EndPlayReason);
 }
 
-void AMP_GameMode::ClearRoundTimer()
-{
-	if (GetWorldTimerManager().IsTimerActive(RoundTimer))
-	{
-		GetWorldTimerManager().ClearTimer(RoundTimer);
-	}
-}
-
-void AMP_GameMode::SetRoundTimer()
-{
-	ClearRoundTimer();
-	GetWorldTimerManager().SetTimer(RoundTimer, FTimerDelegate::CreateLambda([=]() {
-		NextPlayer();
-	}), 120, false);
-}
-
-void AMP_GameMode::ClearDiceRollTimer()
-{
-	if (GetWorldTimerManager().IsTimerActive(DiceRollTimer))
-	{
-		GetWorldTimerManager().ClearTimer(DiceRollTimer);
-	}
-}
-
-void AMP_GameMode::SetDiceRollTimer()
-{
-	ClearDiceRollTimer();
-	GetWorldTimerManager().SetTimer(DiceRollTimer, FTimerDelegate::CreateLambda([=]() {
-		SetRollDiceAnimationTimer();
-	}), 20, false);
-}
-
-void AMP_GameMode::ClearRollDiceAnimationTimer()
-{
-	if (GetWorldTimerManager().IsTimerActive(RollDiceAnimationTimer))
-	{
-		GetWorldTimerManager().ClearTimer(RollDiceAnimationTimer);
-	}
-}
-
-void AMP_GameMode::SetRollDiceAnimationTimer()
-{
-	ClearDiceRollTimer();
-	ClearRollDiceAnimationTimer();
-	PlayMenu->GetMediaOverlay()->SetVisibility(ESlateVisibility::Visible);
-	PlayMenu->GetDiceRollMediaPlayer()->OpenSource(PlayMenu->GetDiceRollSource());
-	PlayMenu->GetButtons()->SetVisibility(ESlateVisibility::Hidden);
-	GetWorldTimerManager().SetTimer(RollDiceAnimationTimer, FTimerDelegate::CreateLambda([=]() {
-		PlayMenu->GetMediaOverlay()->SetVisibility(ESlateVisibility::Collapsed);
-		ExecutePlayerTurn();
-		PlayMenu->GetButtons()->SetVisibility(ESlateVisibility::Visible);
-		SetRoundTimer();
-	}), 3.1, false);
-}
-
-void AMP_GameMode::ClearUseCardTimer()
-{
-	if (GetWorldTimerManager().IsTimerActive(UseCardTimer))
-	{
-		GetWorldTimerManager().ClearTimer(UseCardTimer);
-	}
-}
-
-void AMP_GameMode::SetUseCardTimer()
-{
-	ClearUseCardTimer();
-	PlayMenu->GetCardInfoOverlay()->SetVisibility(ESlateVisibility::Visible);
-	GetWorldTimerManager().SetTimer(UseCardTimer, FTimerDelegate::CreateLambda([=]() {
-		PlayMenu->GetCardInfoOverlay()->SetVisibility(ESlateVisibility::Collapsed);
-	}), 10, false);
-}
-
-void AMP_GameMode::ClearSellForRestTimer()
-{
-	if (GetWorldTimerManager().IsTimerActive(SellForRestTimer))
-	{
-		GetWorldTimerManager().ClearTimer(SellForRestTimer);
-	}
-}
-
-void AMP_GameMode::SetSellRestTimer()
-{
-	ClearSellForRestTimer();
-	GetWorldTimerManager().SetTimer(SellForRestTimer, FTimerDelegate::CreateLambda([=]() {
-		 ContinuePay();
-	}), 180, false);
-}
-
-void AMP_GameMode::PayRest(AParticipantPawn* Player, int Rest, AParticipantPawn* Receiver)
-{
-	bool Continue = false;
-	TArray<int> UtilitiesAndRailroads = { 12, 28, 5, 15, 25, 35 };
-
-	TArray<TArray<int>> PropertyPositionByGroups = {
-		{1, 3},
-		{6, 8, 9},
-		{11, 13, 14},
-		{16, 18, 19},
-		{21, 23, 24},
-		{26, 27, 29},
-		{31, 32, 34},
-		{37, 39}
-	};
-
-	do
-	{
-		[&]
-		{
-			Continue = false;
-			CalculateCanBuySellHouseOrProperty();
-			for (TArray<int> groups : PropertyPositionByGroups)
-			{
-				for (int PropertyPosition : groups)
-				{
-					AMonopolyHouseProperty* Property = Cast<AMonopolyHouseProperty>(MonopolyProperties[PropertyPosition]);
-					if (Property->CanSellHouse)
-					{
-						SellHouse(MonopolyProperties[PropertyPosition], Player);
-						Rest -= Player->Pay(Rest, Receiver);
-						Continue = true;
-						return;
-					}
-					else if (Property->CanSellProperty)
-					{
-						SellProperty(PropertyPosition, Player);
-						Rest -= Player->Pay(Rest, Receiver);
-						Continue = true;
-						return;
-					}
-				}
-			}
-		}();
-	} while (Rest > 0 && Continue);
-
-	Continue = true;
-	while (Rest > 0 && Continue)
-	{
-		Continue = false;
-		for (int PropertyPosition : UtilitiesAndRailroads)
-		{
-			if (MonopolyProperties[PropertyPosition]->GetPropertyOwner() == Player)
-			{
-				SellProperty(PropertyPosition, Player);
-				Rest -= Player->Pay(Rest, Receiver);
-				Continue = true;
-				break;
-			}
-		}
-	}
-	Player->Rest = Rest;
-}
-
-void AMP_GameMode::HandleRest(AParticipantPawn* Player, int Rest, AParticipantPawn* Receiver)
-{
-	if (!Player->IsBot() && Rest > 0)
-	{
-		HandleMoneyInfo(Player->GetMoney());
-		SetSellForRestTimer(Player, Rest);
-	}
-	else if (Rest > 0)
-	{
-		PayRest(Player, Rest, Receiver);
-		if (Player->Rest > 0)
-		{
-			Players.Remove(Player);
-			delete Player;
-			PlayerTurn--;
-			NextPlayer();
-		}
-	}
-}
-
 void AMP_GameMode::Initialize()
 {
-	UE_LOG(LogTemp, Warning, TEXT("MP_GameMode Initialization"));
+	FFileHelper::SaveStringToFile(FString("Initializing game\n"), *FilePath, FFileHelper::EEncodingOptions::AutoDetect, &IFileManager::Get());
 	PlayerTurn = 0;
 	LastDiceRolled = 0;
 	int pos = 0;
@@ -338,6 +166,225 @@ void AMP_GameMode::Initialize()
 	PlayMenu->GetMediaOverlay()->SetVisibility(ESlateVisibility::Collapsed);
 }
 
+void AMP_GameMode::ClearRoundTimer()
+{
+	if (GetWorldTimerManager().IsTimerActive(RoundTimer))
+	{
+		GetWorldTimerManager().ClearTimer(RoundTimer);
+	}
+}
+
+void AMP_GameMode::SetRoundTimer()
+{
+	ClearRoundTimer();
+	GetWorldTimerManager().SetTimer(RoundTimer, FTimerDelegate::CreateLambda([=]() {
+		NextPlayer();
+	}), 120, false);
+}
+
+void AMP_GameMode::ClearDiceRollTimer()
+{
+	if (GetWorldTimerManager().IsTimerActive(DiceRollTimer))
+	{
+		GetWorldTimerManager().ClearTimer(DiceRollTimer);
+	}
+}
+
+void AMP_GameMode::SetDiceRollTimer()
+{
+	ClearDiceRollTimer();
+	GetWorldTimerManager().SetTimer(DiceRollTimer, FTimerDelegate::CreateLambda([=]() {
+		SetRollDiceAnimationTimer();
+	}), 20, false);
+}
+
+void AMP_GameMode::ClearRollDiceAnimationTimer()
+{
+	if (GetWorldTimerManager().IsTimerActive(RollDiceAnimationTimer))
+	{
+		GetWorldTimerManager().ClearTimer(RollDiceAnimationTimer);
+	}
+}
+
+void AMP_GameMode::SetRollDiceAnimationTimer()
+{
+	ClearDiceRollTimer();
+	ClearRollDiceAnimationTimer();
+	PlayMenu->GetMediaOverlay()->SetVisibility(ESlateVisibility::Visible);
+	PlayMenu->GetDiceRollMediaPlayer()->OpenSource(PlayMenu->GetDiceRollSource());
+	PlayMenu->GetButtons()->SetVisibility(ESlateVisibility::Hidden);
+	PlayDiceRollSound();
+	GetWorldTimerManager().SetTimer(RollDiceAnimationTimer, FTimerDelegate::CreateLambda([=]() {
+		PlayMenu->GetMediaOverlay()->SetVisibility(ESlateVisibility::Collapsed);
+		ExecutePlayerTurn();
+		PlayMenu->GetButtons()->SetVisibility(ESlateVisibility::Visible);
+		SetRoundTimer();
+	}), 3.1, false);
+}
+
+void AMP_GameMode::ClearUseCardTimer()
+{
+	if (GetWorldTimerManager().IsTimerActive(UseCardTimer))
+	{
+		GetWorldTimerManager().ClearTimer(UseCardTimer);
+	}
+}
+
+void AMP_GameMode::SetUseCardTimer()
+{
+	ClearUseCardTimer();
+	PlayMenu->GetCardInfoOverlay()->SetVisibility(ESlateVisibility::Visible);
+	GetWorldTimerManager().SetTimer(UseCardTimer, FTimerDelegate::CreateLambda([=]() {
+		PlayMenu->GetCardInfoOverlay()->SetVisibility(ESlateVisibility::Collapsed);
+	}), 10, false);
+}
+
+void AMP_GameMode::ClearSellForRestTimer()
+{
+	if (GetWorldTimerManager().IsTimerActive(SellForRestTimer))
+	{
+		GetWorldTimerManager().ClearTimer(SellForRestTimer);
+	}
+}
+
+void AMP_GameMode::SetSellRestTimer()
+{
+	ClearSellForRestTimer();
+	GetWorldTimerManager().SetTimer(SellForRestTimer, FTimerDelegate::CreateLambda([=]() {
+		 ContinuePay();
+	}), 180, false);
+}
+
+void AMP_GameMode::PayRest(AParticipantPawn* Player, int Rest, AParticipantPawn* Receiver)
+{
+	bool Continue = true;
+	TArray<int> UtilitiesAndRailroads = { 12, 28, 5, 15, 25, 35 };
+
+	TArray<TArray<int>> PropertyPositionByGroups = {
+		{1, 3},
+		{6, 8, 9},
+		{11, 13, 14},
+		{16, 18, 19},
+		{21, 23, 24},
+		{26, 27, 29},
+		{31, 32, 34},
+		{37, 39}
+	};
+
+	Log(FString("Selling properties\n"));
+	for (TArray<int> groups : PropertyPositionByGroups)
+	{
+		bool SamePropOwner = true;
+		bool NoHousesOwned = true;
+		bool AnyPropertyOwned = false;
+		for (int PropertyPosition : groups)
+		{
+			AMonopolyHouseProperty* Property = Cast<AMonopolyHouseProperty>(MonopolyProperties[PropertyPosition]);
+			if (Property->GetHouses() > 0) NoHousesOwned = false;
+			if (Property->GetPropertyOwner() != Player) SamePropOwner = false;
+			else AnyPropertyOwned = true;
+		}
+
+		if (AnyPropertyOwned && (!SamePropOwner || NoHousesOwned || (SamePropOwner && NoHousesOwned)))
+			for (int PropertyPosition : groups)
+				if (MonopolyProperties[PropertyPosition]->GetPropertyOwner() == Player)
+				{
+					SellProperty(PropertyPosition, Player);
+					Player->Pay(Player->Rest, Receiver);
+					Log(FString::Format(TEXT("Player {0} sold {1} --- Rest = {2}\n"), { Player->GetParticipantName(), MonopolyProperties[PropertyPosition]->GetPropertyName(), Rest }));
+				}
+	}
+
+	if (Rest > 0)
+	{
+		Log(FString("Selling railroads and utilites\n"));
+		for (int PropertyPosition : UtilitiesAndRailroads)
+		{
+			if (MonopolyProperties[PropertyPosition]->GetPropertyOwner() == Player)
+			{
+				SellProperty(PropertyPosition, Player);
+				Player->Pay(Player->Rest, Receiver);
+				Log(FString::Format(TEXT("Player {0} sold {1} --- Rest = {2}\n"), { Player->GetParticipantName(), MonopolyProperties[PropertyPosition]->GetPropertyName(), Rest }));
+			}
+		}
+	}
+
+	if (Player->Rest > 0)
+	{
+		Log(FString("Selling Houses\n"));
+		for (TArray<int> groups : PropertyPositionByGroups)
+		{
+			bool SamePropOwner = true;
+
+			for (int PropertyPosition : groups)
+			{
+				if (DegradePossible(MonopolyProperties[PropertyPosition], Player))
+				{
+					SellHouse(MonopolyProperties[PropertyPosition], Player);
+					Player->Pay(Player->Rest, Receiver);
+					Log(FString::Format(TEXT("Player {0} sold house on {1} --- Rest = {2}\n"), { Player->GetParticipantName(), MonopolyProperties[PropertyPosition]->GetPropertyName(), Rest }));
+				}
+				if (Player->Rest <= 0) break;
+			}
+			if (Player->Rest <= 0) break;
+		}
+	}
+	Log(FString::Format(TEXT("Leaving PayRest --- Rest left: {0}\n"), {Rest}));
+}
+
+void AMP_GameMode::HandleRest(AParticipantPawn* Player, int Rest, AParticipantPawn* Receiver)
+{
+	FString ReceiverName = Receiver ? Receiver->GetParticipantName() : "BANK";
+	Log(FString::Format(TEXT("Player: {0} ... OWES ... {1} ... TO ... {2}\n"), {Player->GetParticipantName(), Rest, ReceiverName }));
+	if (!Player->IsBot() && Rest > 0)
+	{
+		HandleMoneyInfo(Player->GetMoney());
+		PlayMenu->SetVisibility(ESlateVisibility::Collapsed);
+		GenerateTilesForRestWidget();
+		Player->Rest = Rest;
+		PayRestMenu->RestPay = Rest;
+		SetSellRestTimer();
+		PayRestMenu->GetSellButton()->SetVisibility(ESlateVisibility::Collapsed);
+		PayRestMenu->GetContinueButton()->SetVisibility(ESlateVisibility::Collapsed);
+		PayRestMenu->GetDowngradeButton()->SetVisibility(ESlateVisibility::Collapsed);
+		PayRestMenu->GetRestTextBlock()->SetText(UKismetTextLibrary::Conv_IntToText(Rest));
+		BindPayRestButtons();
+	}
+	else if (Rest > 0)
+	{
+		PayRest(Player, Rest, Receiver);
+		if (Player->Rest > 0)
+		{
+			Log(FString::Format(TEXT("Player: {0} LOST, removing from list\n"), {Player->GetParticipantName()}));
+			Players.Remove(Player);
+			PlayerTurn--;
+			if (Players.Num() > 1)
+				NextPlayer();
+			else {
+				GameOverMenu->Show(FText::FromString("Congratulations! You Win!"));
+			}
+		}
+	}
+}
+
+void AMP_GameMode::RecalculateRestInformation()
+{
+	PayRestMenu->SetVisibility(ESlateVisibility::Collapsed);
+	PayRestMenu->SetVisibility(ESlateVisibility::Visible);
+	AParticipantPawn* Player = GetParticipant();
+	int Total = Player->GetMoney()->Total();
+	if (Total >= Player->Rest)
+	{
+		PayRestMenu->GetRestOverlay()->SetVisibility(ESlateVisibility::Collapsed);
+		PayRestMenu->GetContinueButton()->SetVisibility(ESlateVisibility::Visible);
+	}
+	else
+	{
+		PayRestMenu->RestPay = Player->Rest;
+		PayRestMenu->GetRestTextBlock()->SetText(UKismetTextLibrary::Conv_IntToText(Player->Rest));
+	}
+}
+
 void AMP_GameMode::ContinuePay()
 {
 	AParticipantPawn* Player = GetParticipant();
@@ -345,8 +392,8 @@ void AMP_GameMode::ContinuePay()
 	if (Player->GetMoney()->Total() >= Player->Rest)
 	{
 		Player->Pay(Player->Rest, MonopolyProperties[Player->GetPlayerPosition()]->GetPropertyOwner());
-		Player->Rest = 0;
-		HandlePlayMenu(false, MonopolyProperties[Player->GetPlayerPosition()]);
+		PlayMenu->SetVisibility(ESlateVisibility::Collapsed);
+		HandlePlayMenu(true, MonopolyProperties[Player->GetPlayerPosition()]);
 	}
 	else
 	{
@@ -356,11 +403,13 @@ void AMP_GameMode::ContinuePay()
 		ChanceCards.Empty();
 		ChestCards.Empty();
 		/// show Game Over with lose info
+		GameOverMenu->Show(FText::FromString("You Lost!"));
 	}
 }
 
 void AMP_GameMode::StartGame(APlayerController* PlayerController, TArray<UStaticMesh*> StaticMeshList, TArray<UMaterial*> Materials)
 {
+	Log("Starting game\n");
 	GeneratePlayers(PlayerController, StaticMeshList, Materials);
 	const int32 NumShuffles = Players.Num() - 1;
 	for (int32 i = 0; i < NumShuffles; ++i)
@@ -466,11 +515,16 @@ void AMP_GameMode::GeneratePlayers(APlayerController* PlayerController, TArray<U
 	CHEAT();
 }
 
+void AMP_GameMode::Log(FString log)
+{
+	FFileHelper::SaveStringToFile(log, *FilePath, FFileHelper::EEncodingOptions::AutoDetect, &IFileManager::Get(), EFileWrite::FILEWRITE_Append);
+}
+
 void AMP_GameMode::NextPlayer()
 {
 	NextPlayerTurn();
-	AAIPawn* Bot = Cast<AAIPawn>(Players[PlayerTurn]);
-	if (Bot && Bot->IsBot())
+	AParticipantPawn* Player = GetParticipant();
+	if (Player->IsBot())
 	{
 		SetRoundTimer();
 		PlayMenu->SetVisibility(ESlateVisibility::Collapsed);
@@ -482,8 +536,9 @@ void AMP_GameMode::NextPlayer()
 	{
 		ClearRoundTimer();
 		SetDiceRollTimer();
-		HandlePlayMenu(true, MonopolyProperties[GetParticipant()->GetPlayerPosition()]);
-		HandlePropertyInfo(MonopolyProperties[GetParticipant()->GetPlayerPosition()], GetParticipant());
+		HandlePlayMenu(true, MonopolyProperties[Player->GetPlayerPosition()]);
+		HandlePropertyInfo(MonopolyProperties[Player->GetPlayerPosition()], Player);
+		HandleMoneyInfo(Player->GetMoney());
 	}
 }
 
@@ -499,23 +554,11 @@ void AMP_GameMode::NextPlayerTurn()
 void AMP_GameMode::ExecuteBotTurn()
 {
 	AParticipantPawn* Player = Players[PlayerTurn];
-	//AAIPawn* Bot = Cast<AAIPawn>(Players[PlayerTurn]);
 	if (Player->IsBot())
 	{
 		LastDiceRolled = Player->Play();
-		if (Player->GetPlayerPosition() == 30)
-		{
-			Player->JailedFor = 3;
-			Player->Move(20);
-			return;
-		}
-
-		/// <summary>
-		/// get Bot position, get property on Bot position
-		/// Bot->AI(property); INSIDE Play
-		/// 
-		/// HandleProperty
-		/// </summary>
+		Log(FString::Format(TEXT("Player {0} stepped on {1}\n"), { Player->GetParticipantName(), MonopolyProperties[Player->GetPlayerPosition()]->GetPropertyName() }));
+		HandleProperty(MonopolyProperties[Player->GetPlayerPosition()], Player);
 	}
 }
 
@@ -526,31 +569,26 @@ AMonopolyProperty* AMP_GameMode::ExecutePlayerTurn()
 
 	LastDiceRolled = Player->Play();
 	Player->SetRolled(true);
-	if (Player->GetPlayerPosition() == 30)
-	{
-		Player->JailedFor = 3;
-		Player->Move(20);
-		return GetProperty(Player->GetPlayerPosition());
-	}
+	Log(FString::Format(TEXT("Player {0} stepped on {1}\n"), { Player->GetParticipantName(), MonopolyProperties[Player->GetPlayerPosition()]->GetPropertyName() }));
 
 	int Position = Player->GetPlayerPosition();
 	HandleProperty(MonopolyProperties[Position]);
 	Position = Player->GetPlayerPosition();
 	HandlePlayMenu(false, MonopolyProperties[Position]);
 	HandlePropertyInfo(MonopolyProperties[Position], Player);
-	HandleMoneyInfo(Player->Money);
+	HandleMoneyInfo(Player->GetMoney());
 	return GetProperty(Position);
 }
 
-void AMP_GameMode::HandleProperty(AMonopolyProperty* Property)
+void AMP_GameMode::HandleProperty(AMonopolyProperty* Property, AParticipantPawn* Player)
 {
+	if (!Player) Player = GetParticipant();
 	EType prop_type = Property->GetPropertyType();
 	EActions prop_action = Property->GetPropertyAction();
-	AParticipantPawn* Player = GetParticipant();
+
 	int Rest;
 	FString PriceToPayS;
 	int PriceToPay;
-	int Cash;
 
 	switch (prop_action)
 	{
@@ -571,13 +609,16 @@ void AMP_GameMode::HandleProperty(AMonopolyProperty* Property)
 		UseCard(ChestCards);
 		break;
 	case EActions::GoToJail:
-		if (Player->Card != nullptr)
+		if (!IsValid(Player->Card))
 		{
 			Player->JailedFor = 3;
+			Log(FString::Format(TEXT("Player {0} jailed, moving {1} positions\n"), { Player->GetParticipantName(), 20 }));
 			Player->Move(20);
+			Log(FString::Format(TEXT("Player {0} current position {1}\n"), { Player->GetParticipantName(), Player->GetPlayerPosition() }));
 		}
 		else
 		{
+			Log(FString("Player has card! BAD\n"));
 			if (ChanceCards.Num() < 16)
 			{
 				ChanceCards.Add(Player->Card);
@@ -590,6 +631,7 @@ void AMP_GameMode::HandleProperty(AMonopolyProperty* Property)
 		}
 		break;
 	case EActions::Tax:
+		Log(FString::Format(TEXT("Player {0} landed on a TAX property\n"), {Player->GetParticipantName()}));
 		if (Property->GetPropertyPosition() == 38)
 		{
 			// Luxury Tax
@@ -606,14 +648,24 @@ void AMP_GameMode::HandleProperty(AMonopolyProperty* Property)
 	case EActions::Utility:
 	case EActions::Railroad:
 	case EActions::Property:
-		if (Property->GetPropertyOwner() != Player)
+		if (Property->GetPropertyOwner() != nullptr)
 		{
-			/// Pay / Trade? / Sell Props / Lose
-			PriceToPayS = Property->PriceToPay(Player);
-			PriceToPay = FCString::Atoi(*PriceToPayS);
-			Cash = Player->GetMoney()->Total();
-			Rest = Player->Pay(PriceToPay, Property->GetPropertyOwner());
-			HandleRest(Player, Rest);
+			if (Property->GetPropertyOwner() != Player)
+			{
+				/// Pay / Trade? / Sell Props / Lose
+				PriceToPayS = Property->PriceToPay(Player);
+				PriceToPay = FCString::Atoi(*PriceToPayS);
+				Rest = Player->Pay(PriceToPay, Property->GetPropertyOwner());
+				Log(FString::Format(TEXT("Player {0} paid {1} to {2}\n"), { Player->GetParticipantName(), PriceToPay - Rest, Property->GetPropertyOwner()->GetParticipantName() }));
+				HandleRest(Player, Rest);
+			}
+			else
+			{
+				if (Player->IsBot())
+				{
+					HandleBotAI(Player, Property);
+				}
+			}
 		}
 		else
 		{
@@ -642,7 +694,7 @@ void AMP_GameMode::UseCard(TArray<ACard*> &Cards)
 		Cards.Add(card);
 	else
 	{
-		if (Player->Card)
+		if (IsValid(Player->Card))
 		{
 			Cards.Add(card);
 		}
@@ -712,7 +764,9 @@ void AMP_GameMode::UseCard(TArray<ACard*> &Cards)
 			Player->JailedFor = 3;
 			int MoveBy = 10 - Player->GetPlayerPosition();
 			MoveBy = (MoveBy < 0 ? 40 + MoveBy : MoveBy);
+			Log(FString::Format(TEXT("Player {0} jailed, moving {1} positions\n"), { Player->GetParticipantName(), MoveBy }));
 			Player->Move(MoveBy);
+			Log(FString::Format(TEXT("Player {0} current position {1}\n"), { Player->GetParticipantName(), Player->GetPlayerPosition() }));
 		}
 		break;
 	default:
@@ -774,30 +828,26 @@ void AMP_GameMode::HandlePropertyInfo(AMonopolyProperty* Property, AParticipantP
 		PlayMenu->GetPropertyInfo()->SetVisibility(ESlateVisibility::Hidden);
 		PlayMenu->GetPropertyOverlayImage()->SetOpacity(0.0);
 		PlayMenu->GetBuyScaleBox()->SetVisibility(ESlateVisibility::Collapsed);
-		PlayMenu->GetPayScaleBox()->SetVisibility(ESlateVisibility::Collapsed);
 		PlayMenu->GetUpgradeScaleBox()->SetVisibility(ESlateVisibility::Collapsed);
-		// If property is tax => show payscalebox
 	}
 }
 
 void AMP_GameMode::HandleOwnedProperty(AMonopolyProperty* Property, AParticipantPawn* Participant)
 {
+	CalculateCanBuySellHouseOrProperty();
 	AParticipantPawn* PropertyOwner = Property->GetPropertyOwner();
 
 	if (IsValid(PropertyOwner))
 	{
-		PlayMenu->GetOwner()->SetText(UKismetTextLibrary::Conv_StringToText(PropertyOwner->ParticipantName));
+		Log(FString::Format(TEXT("Property {0} owner: {1}\n"), { Property->GetPropertyName(), Property->GetPropertyOwner()->GetParticipantName() }));
+		PlayMenu->GetOwner()->SetText(UKismetTextLibrary::Conv_StringToText(PropertyOwner->GetParticipantName()));
 		if (PropertyOwner == Participant)
 		{
 			PlayMenu->GetUpgrade()->SetText(UKismetTextLibrary::Conv_StringToText(Property->UpgradePrice()));
-
 			PlayMenu->GetPay()->SetText(UKismetTextLibrary::Conv_StringToText(""));
 			PlayMenu->GetPrice()->SetText(UKismetTextLibrary::Conv_StringToText(""));
-			// hide buy button, hide pay button, show upgrade button if satisfies conditions, show sell button
 			PlayMenu->GetBuyScaleBox()->SetVisibility(ESlateVisibility::Collapsed);
-			PlayMenu->GetPayScaleBox()->SetVisibility(ESlateVisibility::Collapsed);
 			PlayMenu->GetUpgradeScaleBox()->SetVisibility(ESlateVisibility::Collapsed);
-			// if conditions are met to upgrade/buy house, show upgrade button
 			if (UpgradePossible(Property, Participant))
 			{
 				PlayMenu->GetUpgradeScaleBox()->SetVisibility(ESlateVisibility::Visible);
@@ -812,22 +862,20 @@ void AMP_GameMode::HandleOwnedProperty(AMonopolyProperty* Property, AParticipant
 			}
 			PlayMenu->GetPrice()->SetText(UKismetTextLibrary::Conv_StringToText("OWNED"));
 			PlayMenu->GetUpgrade()->SetText(UKismetTextLibrary::Conv_StringToText(""));
-			// hide buy button, show pay button if has enough money, show possibility to sell current participant properties if
-			// that way can have enough money to pay, else, end game for participant
 			PlayMenu->GetBuyScaleBox()->SetVisibility(ESlateVisibility::Collapsed);
-			PlayMenu->GetPayScaleBox()->SetVisibility(ESlateVisibility::Visible);
 			PlayMenu->GetUpgradeScaleBox()->SetVisibility(ESlateVisibility::Collapsed);
 		}
 	}
 	else
 	{
+		Log(FString::Format(TEXT("Property {0} has NO owner --- PLAYER: {1}\n"), { Property->GetPropertyName(), Participant->GetParticipantName()}));
 		PlayMenu->GetOwner()->SetText(UKismetTextLibrary::Conv_StringToText(""));
 		PlayMenu->GetPay()->SetText(UKismetTextLibrary::Conv_StringToText(""));
 		PlayMenu->GetPrice()->SetText(UKismetTextLibrary::Conv_StringToText(Property->PriceToBuy()));
 		PlayMenu->GetUpgrade()->SetText(UKismetTextLibrary::Conv_StringToText(Property->UpgradePrice()));
 		// Show buy button here, hide pay button, hide sell button
-		PlayMenu->GetBuyScaleBox()->SetVisibility(ESlateVisibility::Visible);
-		PlayMenu->GetPayScaleBox()->SetVisibility(ESlateVisibility::Collapsed);
+		if (Participant->GetMoney()->Total() >= FCString::Atoi(*Property->PriceToSell()))
+			PlayMenu->GetBuyScaleBox()->SetVisibility(ESlateVisibility::Visible);
 		PlayMenu->GetUpgradeScaleBox()->SetVisibility(ESlateVisibility::Collapsed);
 	}
 }
@@ -887,6 +935,7 @@ void AMP_GameMode::BuyProperty(AMonopolyProperty* Property, AParticipantPawn* Pl
 	if (!Property) Property = MonopolyProperties[Player->GetPlayerPosition()];
 
 	Player->Pay(FCString::Atoi(*Property->PriceToBuy()));
+	Log(FString::Format(TEXT("Player {0} bought {1}\n"), { Player->GetParticipantName(), Property->GetPropertyName() }));
 
 	Property->SetPropertyOwner(Player);
 	HandlePropertyInfo(Property, Player);
@@ -899,10 +948,15 @@ void AMP_GameMode::SellProperty(const int Position, AParticipantPawn *Player)
 		Player = GetParticipant();
 	AMonopolyProperty* Property = MonopolyProperties[Position];
 
+	Log(FString::Format(TEXT("Propery price: {0} --- Player Money initial: {1}\n"), { Property->PriceToSell(), Player->GetMoney()->Total()}));
 	Player->Receive(FCString::Atoi(*Property->PriceToSell()));
+	Log(FString::Format(TEXT("Player Money After: {0}\n"), {Player->GetMoney()->Total()}));
 	Property->ResetInit();
-	HandlePropertyInfo(Property, Player);
-	HandleMoneyInfo(Player->GetMoney());
+	if (!Player->IsBot())
+	{
+		HandlePropertyInfo(Property, Player);
+		HandleMoneyInfo(Player->GetMoney());
+	}
 }
 
 bool AMP_GameMode::UpgradePossible(AMonopolyProperty* Property, AParticipantPawn* Participant)
@@ -926,8 +980,20 @@ bool AMP_GameMode::UpgradePossible(AMonopolyProperty* Property, AParticipantPawn
 	return count == max_count;
 }
 
-void AMP_GameMode::UpgradeProperty(AMonopolyProperty* Property)
+bool AMP_GameMode::DegradePossible(AMonopolyProperty* Property, AParticipantPawn* Participant)
 {
+	AMonopolyHouseProperty* HouseProperty = Cast<AMonopolyHouseProperty>(Property);
+	if (!HouseProperty)
+	{
+		return false;
+	}
+
+	return HouseProperty->GetHouses() > 0;
+}
+
+void AMP_GameMode::UpgradeProperty(AMonopolyProperty* Property, AParticipantPawn* Player)
+{
+	if (!Player) Player = GetParticipant();
 	AMonopolyHouseProperty* HouseProperty = Cast<AMonopolyHouseProperty>(Property);
 	FHouses houses = Houses[HouseProperty->GetPropertyPosition()];
 	for (int i = 0; i < houses.houses.Num(); i++)
@@ -941,8 +1007,11 @@ void AMP_GameMode::UpgradeProperty(AMonopolyProperty* Property)
 			break;
 		}
 	}
-	HandlePropertyInfo(Property, GetParticipant());
-	HandleMoneyInfo(GetParticipant()->GetMoney());
+	
+	if (Player->IsBot()) return;
+
+	HandlePropertyInfo(Property, Player);
+	HandleMoneyInfo(Player->GetMoney());
 }
 
 void AMP_GameMode::SellHouse(AMonopolyProperty* Property, AParticipantPawn* Player)
@@ -962,8 +1031,11 @@ void AMP_GameMode::SellHouse(AMonopolyProperty* Property, AParticipantPawn* Play
 			break;
 		}
 	}
-	HandlePropertyInfo(Property, Player);
-	HandleMoneyInfo(Player->GetMoney());
+	if (!Player->IsBot())
+	{
+		HandlePropertyInfo(Property, Player);
+		HandleMoneyInfo(Player->GetMoney());
+	}
 }
 
 int AMP_GameMode::Pay(const int Amount)
@@ -986,8 +1058,14 @@ void AMP_GameMode::CHEAT()
 	MonopolyProperties[1]->SetPropertyOwner(GetParticipant());
 	MonopolyProperties[3]->SetPropertyOwner(GetParticipant());
 
-	APlayerPawn* Player = Cast<APlayerPawn>(GetParticipant());
-	Player->CheatMove();
+	Players[0]->Pay(900);
+	for (int i = 1; i < Players.Num(); i++)
+	{
+		Players[i]->Pay(500);
+	}
+
+	/*APlayerPawn* Player = Cast<APlayerPawn>(GetParticipant());
+	Player->CheatMove();*/
 }
 
 void AMP_GameMode::CalculateCanBuySellHouseOrProperty()
@@ -1002,7 +1080,7 @@ void AMP_GameMode::CalculateCanBuySellHouseOrProperty()
 		EPropGroups group = MHouseProperty->GetPropGroup();
 
 		int count = 0, max_count = (group == EPropGroups::Brown || group == EPropGroups::DarkBlue ? 2 : 3);
-		max_houses = MHouseProperty->GetHouses() > max_houses ? MHouseProperty->GetHouses() : max_houses;
+		max_houses = MHouseProperty->GetHouses();
 		for (int i = 0; i < 40 && count < max_count; i++)
 		{
 			AMonopolyHouseProperty* prop = Cast<AMonopolyHouseProperty>(MonopolyProperties[i]);
@@ -1016,25 +1094,11 @@ void AMP_GameMode::CalculateCanBuySellHouseOrProperty()
 			}
 		}
 
-		if (count == max_count && MHouseProperty->GetHouses() < 3 && MHouseProperty->GetHouses() <= max_houses)
-		{
-			MHouseProperty->CanBuyHouse = true;
-		}
-		else
-		{
-			MHouseProperty->CanBuyHouse = false;
-		}
 
-		if (count == max_count && MHouseProperty->GetHouses() >= max_houses && max_houses > 0)
-		{
-			MHouseProperty->CanSellHouse = true;
-		}
-		else
-		{
-			MHouseProperty->CanSellHouse = false;
-		}
+		MHouseProperty->CanBuyHouse = UpgradePossible(MHouseProperty, Participant);
+		MHouseProperty->CanSellHouse = DegradePossible(MHouseProperty, Participant);
 
-		if (max_houses == 0)
+		if (count < max_count || max_houses == 0)
 		{
 			MHouseProperty->CanSellProperty = true;
 		}
@@ -1042,7 +1106,7 @@ void AMP_GameMode::CalculateCanBuySellHouseOrProperty()
 		{
 			MHouseProperty->CanSellProperty = false;
 		}
-		}
+	}
 }
 
 void AMP_GameMode::OfferTrade(
@@ -1050,9 +1114,8 @@ void AMP_GameMode::OfferTrade(
 	AParticipantPawn* Player2,
 	FOffer offer)
 {
-	bool accept = FMath::RandBool();
-
-	if (!accept && Player2->IsBot()) return;
+	Log(FString::Format(TEXT("Trade --- {0} < - > {1}\n"), { Player1->GetParticipantName(), Player2->GetParticipantName() }));
+	if (!Player2->IsBot()) return;
 
 	bool need = true;
 	bool enough = true;
@@ -1171,54 +1234,284 @@ void AMP_GameMode::OfferTrade(
 	}
 }
 
+void AMP_GameMode::SellUnnecesaryPropertiesAndBuyProperty(AParticipantPawn* Player, AMonopolyProperty* Property)
+{
+	int Total = 0;
+
+	TArray<int> PropertyPositions = {
+		1, 3, 6, 8, 9, 11, 13, 14, 16, 18, 19, 21, 23, 24, 26, 27, 29, 31, 32, 34, 37, 39
+	};
+
+	TArray<EPropGroups> Groups = {
+		EPropGroups::Brown,
+		EPropGroups::LightBlue,
+		EPropGroups::Pink,
+		EPropGroups::Orange,
+		EPropGroups::Red,
+		EPropGroups::Yellow,
+		EPropGroups::Green,
+		EPropGroups::DarkBlue
+	};
+
+	int PriceToBuy = FCString::Atoi(*Property->PriceToBuy());
+
+	TArray<AMonopolyProperty*> PropsToSell;
+	for (EPropGroups Group : Groups)
+	{
+		int max_group_prop = 0;
+		int owned_group_props = 0;
+		int value = 0;
+		for (int Pos : PropertyPositions)
+		{
+			AMonopolyHouseProperty* HProp = Cast<AMonopolyHouseProperty>(MonopolyProperties[Pos]);
+			if (HProp->GetPropGroup() == Group)
+			{
+				max_group_prop++;
+				if (HProp->GetPropertyOwner() == Player)
+				{
+					owned_group_props++;
+				}
+			}
+		}
+
+		for (int Pos : PropertyPositions)
+		{
+			AMonopolyHouseProperty* HProp = Cast<AMonopolyHouseProperty>(MonopolyProperties[Pos]);
+			if (HProp->GetPropGroup() == Group && owned_group_props == max_group_prop / 2)
+			{
+				if (HProp->GetPropertyOwner() == Player)
+				{
+					value += FCString::Atoi(*HProp->PriceToBuy()) / 2;
+					PropsToSell.Add(HProp);
+					break;
+				}
+			}
+		}
+
+		Total += value;
+
+	}
+	if (Player->GetMoney()->Total() + Total > PriceToBuy)
+	{
+		for (AMonopolyProperty* Prop : PropsToSell)
+		{
+			SellProperty(Prop->GetPropertyPosition(), Player);
+		}
+		BuyProperty(Property, Player);
+	}
+}
+
+void AMP_GameMode::BuyHouseAI(AParticipantPawn* Player, AMonopolyProperty* prop)
+{
+	CalculateCanBuySellHouseOrProperty();
+	bool CanBuyHouse = true;
+	AMonopolyHouseProperty* Property = Cast<AMonopolyHouseProperty>(prop);
+	TArray<AMonopolyHouseProperty*> SameGroupProps;
+	TArray<int> SameGroupPropHousePrices;
+
+	for (AMonopolyProperty* Prop : MonopolyProperties)
+	{
+		AMonopolyHouseProperty* HProp = Cast<AMonopolyHouseProperty>(Prop);
+		if (HProp && HProp->GetPropGroup() == Property->GetPropGroup())
+		{
+			SameGroupProps.Add(HProp);
+			SameGroupPropHousePrices.Add(FCString::Atoi(*(HProp->UpgradePrice())));
+		}
+	}
+
+	Log(FString::Format(TEXT("BuyHouseAI CanBuyHouse before while: {0}\n"), { CanBuyHouse }));
+	do
+	{
+		CanBuyHouse = false;
+		for (AMonopolyHouseProperty* HProp : SameGroupProps)
+		{
+			if (UpgradePossible(HProp, Player)) {
+				if (Player->GetMoney()->Total() > FCString::Atoi(*(HProp->UpgradePrice())))
+				{
+					UpgradeProperty(HProp, Player);
+				}
+			}
+		}
+
+		for (AMonopolyHouseProperty* HProp : SameGroupProps)
+		{
+			if (UpgradePossible(HProp, Player))
+			{
+				CanBuyHouse = true;
+				break;
+			}
+		}
+		Log(FString::Format(TEXT("BuyHouseAI CanBuyHouse at end of for: {0}\n"), { CanBuyHouse }));
+	} while (CanBuyHouse);
+}
+
+void AMP_GameMode::BuyPropertyAI(AParticipantPawn* Player, AMonopolyProperty* Property)
+{
+	Log(FString::Format(TEXT("BuyPropertyAI --- {0} | {1}\n"), {Player->GetParticipantName(), Property->GetPropertyName()}));
+	AMonopolyHouseProperty* HProperty = Cast<AMonopolyHouseProperty>(Property);
+	EPropGroups group = HProperty->GetPropGroup();
+	int PriceToBuy = FCString::Atoi(*HProperty->PriceToBuy());
+	UMoney* Money = Player->GetMoney();
+	int Total = Money->Total();
+
+	if (Total < PriceToBuy)
+	{
+		bool IsLastPropNeeded = true;
+		Log(FString("BuyPropertyAI --- NO MONEY\n"));
+		for (AMonopolyProperty* prop : MonopolyProperties)
+		{
+			AMonopolyHouseProperty* hprop = Cast<AMonopolyHouseProperty>(prop);
+			if (hprop)
+			{
+				if (hprop->GetPropGroup() == group)
+				{
+					Log(FString("BuyPropertyAI --- same group\n"));
+					if (prop != Property)
+					{
+						Log(FString("BuyPropertyAI --- not same property\n"));
+						if (prop->GetPropertyOwner() != Player)
+						{
+							if (hprop->GetPropertyOwner())
+								Log(FString::Format(TEXT("BuyPropertyAI --- same group, property owner is not {0}\n"), {hprop->GetPropertyOwner()->GetParticipantName()}));
+							IsLastPropNeeded = false;
+							break;
+						}
+						else
+						{
+							Log(FString::Format(TEXT("BuyPropertyAI --- same group, property owner IS {0}\n"), { hprop->GetPropertyOwner()->GetParticipantName() }));
+						}
+					}
+				}
+			}
+		}
+		Log(FString::Format(TEXT("BuyPropertyAI --- LastPropNeeded = {0}\n"), {IsLastPropNeeded}));
+		if (IsLastPropNeeded)
+		{
+			Log(FString::Format(TEXT("BuyPropertyAI --- {0} | {1} --- LastPropNeeded\n"), { Player->GetParticipantName(), Property->GetPropertyName() }));
+			SellUnnecesaryPropertiesAndBuyProperty(Player, Property);
+		}
+		else
+		{
+			Log(FString("Buy propertyy AI over\n"));
+		}
+	}
+	else
+	{
+		Log(FString("BuyPropertyAI --- Enough money\n"));
+		if (Total > PriceToBuy * 2)
+		{
+			Log(FString::Format(TEXT("BuyPropertyAI --- {0} | Total money: {1} > 2 * {2}\n"), { Player->GetParticipantName(), Total, PriceToBuy }));
+			BuyProperty(Property, Player);
+		}
+		else if (Total > PriceToBuy)
+		{
+			Log(FString::Format(TEXT("BuyPropertyAI --- {0} > {1}\n"), {Total, PriceToBuy}));
+			for (AMonopolyProperty* prop : MonopolyProperties)
+			{
+				AMonopolyHouseProperty* hprop = Cast<AMonopolyHouseProperty>(prop);
+				if (hprop && hprop != HProperty &&
+					hprop->GetPropGroup() == HProperty->GetPropGroup() &&
+					(!hprop->GetPropertyOwner() || hprop->GetPropertyOwner() == Player))
+				{
+					Log(FString::Format(TEXT("BuyPropertyAI --- {0} --- {1} > {2}\n"), { Player->GetParticipantName(), Total, PriceToBuy }));
+					BuyProperty(Property, Player);
+					break;
+				}
+			}
+		}
+	}
+}
+
+void AMP_GameMode::BuyRailroadAI(AParticipantPawn* Player, AMonopolyProperty* Property)
+{
+	FOffer offer;
+
+	int PriceToBuy = FCString::Atoi(*Property->PriceToBuy());
+	if (Player->GetMoney()->Total() > 500)
+	{
+		BuyProperty(Property, Player);
+		for (int i = 5; i <= 35; i += 10)
+		{
+			if (i != Property->GetPropertyPosition() &&
+				MonopolyProperties[i]->GetPropertyOwner() &&
+				MonopolyProperties[i]->GetPropertyOwner() != Property->GetPropertyOwner())
+			{
+				offer.P1Receives = { MonopolyProperties[i] };
+				offer.P2ReceivesMoney = 225;
+				if (MonopolyProperties[i]->GetPropertyOwner()->IsBot())
+					OfferTrade(Player, MonopolyProperties[i]->GetPropertyOwner(), offer);
+				break;
+			}
+		}
+	}
+	else
+	{
+		for (int i = 5; i <= 35; i += 10)
+		{
+			if (MonopolyProperties[i] != Property &&
+				(!MonopolyProperties[i]->GetPropertyOwner() ||
+				MonopolyProperties[i]->GetPropertyOwner() == Player))
+			{
+				if (Player->GetMoney()->Total() > PriceToBuy)
+					BuyProperty(Property, Player);
+				else
+					SellUnnecesaryPropertiesAndBuyProperty(Player, Property);
+				break;
+			}
+		}
+	}
+}
+
+void AMP_GameMode::BuyElectricAI(AParticipantPawn* Player, AMonopolyProperty* Property)
+{
+	FOffer offer;
+	int PriceToBuy = FCString::Atoi(*Property->PriceToBuy());
+	if (Player->GetMoney()->Total() > PriceToBuy)
+	{
+		BuyProperty(Property, Player);
+		if (Property->GetPropertyPosition() == 12)
+		{
+			if (MonopolyProperties[28]->GetPropertyOwner() && (MonopolyProperties[28]->GetPropertyOwner()->IsBot()))
+			{
+				if (Player->GetMoney()->Total() >= FCString::Atoi(*MonopolyProperties[28]->PriceToBuy()))
+				{
+					offer.P1Receives = { MonopolyProperties[28] };
+					offer.P2ReceivesMoney = FCString::Atoi(*MonopolyProperties[28]->PriceToBuy()) - 30;
+					if (MonopolyProperties[28]->GetPropertyOwner()->IsBot())
+						OfferTrade(Player, MonopolyProperties[28]->GetPropertyOwner(), offer);
+				}
+			}
+		}
+		else if (Property->GetPropertyPosition() == 28)
+		{
+			if (MonopolyProperties[12]->GetPropertyOwner() && (MonopolyProperties[12]->GetPropertyOwner()->IsBot()))
+			{
+				offer.P1Receives = { MonopolyProperties[12] };
+				offer.P2ReceivesMoney = FCString::Atoi(*MonopolyProperties[12]->PriceToBuy()) - 30;
+				if (MonopolyProperties[12]->GetPropertyOwner()->IsBot())
+					OfferTrade(Player, MonopolyProperties[12]->GetPropertyOwner(), offer);
+			}
+		}
+	}
+}
+
 void AMP_GameMode::HandleBotAI(AParticipantPawn* Player, AMonopolyProperty* Property)
 {
-	bool ToBuy = FMath::RandBool();
 	EType PropertyType = Property->GetPropertyType();
-
-	AMonopolyHouseProperty* HProperty;
-	EPropGroups Group;
-	int PriceToBuy;
-	FOffer offer;
 
 	switch (PropertyType)
 	{
 	case EType::Property:
-		HProperty = Cast<AMonopolyHouseProperty>(Property);
-		Group = HProperty->GetPropGroup();
+		BuyPropertyAI(Player, Property);
+		BuyHouseAI(Player, Property);
 		break;
 	case EType::Railroad:
 		// 5 15 25 35
+		BuyRailroadAI(Player, Property);
 		break;
 	case EType::Utility:
 		// 12 28
-		PriceToBuy = FCString::Atoi(*Property->PriceToBuy());
-		if (Player->GetMoney()->Total() > PriceToBuy)
-		{
-			BuyProperty(Property, Player);
-			if (Property->GetPropertyPosition() == 12)
-			{
-				if (MonopolyProperties[28]->GetPropertyOwner() && (MonopolyProperties[28]->GetPropertyOwner()->IsBot()))
-				{
-					// Trade with other owner for half the price
-					if (Player->GetMoney()->Total() >= FCString::Atoi(*MonopolyProperties[28]->PriceToBuy()))
-					{
-						offer.P1Receives = { MonopolyProperties[28] };
-						offer.P2ReceivesMoney = FCString::Atoi(*MonopolyProperties[28]->PriceToBuy()) - 30;
-						OfferTrade(Player, MonopolyProperties[28]->GetPropertyOwner(), offer);
-					}
-				}
-			}
-			else if (Property->GetPropertyPosition() == 28)
-			{
-				if (MonopolyProperties[12]->GetPropertyOwner() && (MonopolyProperties[12]->GetPropertyOwner()->IsBot()))
-				{
-					offer.P1Receives = { MonopolyProperties[12] };
-					offer.P2ReceivesMoney = FCString::Atoi(*MonopolyProperties[12]->PriceToBuy()) - 30;
-					OfferTrade(Player, MonopolyProperties[12]->GetPropertyOwner(), offer);
-				}
-			}
-		}
+		BuyElectricAI(Player, Property);
 		break;
 	default:
 		break;

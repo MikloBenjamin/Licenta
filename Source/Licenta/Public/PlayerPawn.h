@@ -30,7 +30,7 @@ public:
 	void CheatMove()
 	{
 		MoveCamera();
-		MovePawn(1);
+		MovePawn(30);
 	}
 	
 };

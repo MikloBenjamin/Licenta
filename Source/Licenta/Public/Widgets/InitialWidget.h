@@ -22,8 +22,5 @@ protected:
 	UButton* Start;
 
 	UPROPERTY(BlueprintReadWrite, meta = (BindWidget))
-	UButton* Load;
-
-	UPROPERTY(BlueprintReadWrite, meta = (BindWidget))
 	UButton* Quit;
 };

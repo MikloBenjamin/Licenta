@@ -44,12 +44,10 @@ public:
 	UButton* GetRtdButton() const { return RollTheDiceButton; }
 	UButton* GetEndTurnButton() const { return EndTurnButton; }
 	UButton* GetBuyButton() const { return BuyButton; }
-	UButton* GetPayButton() const { return PayButton; }
 	UButton* GetPropertiesButton() const { return PropertiesButton; }
 	UButton* GetUpgradeButton() const { return UpgradeButton; }
 	UScaleBox* GetBuyScaleBox() const { return BuyScaleBox; }
 	UScaleBox* GetPropertiesScaleBox() const { return PropertiesScaleBox; }
-	UScaleBox* GetPayScaleBox() const { return PayScaleBox; }
 	UScaleBox* GetUpgradeScaleBox() const { return UpgradeScaleBox; }
 	UTextBlock* GetCardInfo() const { return CardInfo; }
 	UImage* GetInfoBackground() const { return InfoBackground; }
@@ -125,9 +123,6 @@ protected:
 	UButton* BuyButton;
 
 	UPROPERTY(BlueprintReadWrite, meta = (BindWidget))
-	UButton* PayButton;
-
-	UPROPERTY(BlueprintReadWrite, meta = (BindWidget))
 	UButton* PropertiesButton;
 
 	UPROPERTY(BlueprintReadWrite, meta = (BindWidget))
@@ -138,9 +133,6 @@ protected:
 
 	UPROPERTY(BlueprintReadWrite, meta = (BindWidget))
 	UScaleBox* PropertiesScaleBox;
-
-	UPROPERTY(BlueprintReadWrite, meta = (BindWidget))
-	UScaleBox* PayScaleBox;
 
 	UPROPERTY(BlueprintReadWrite, meta = (BindWidget))
 	UScaleBox* UpgradeScaleBox;

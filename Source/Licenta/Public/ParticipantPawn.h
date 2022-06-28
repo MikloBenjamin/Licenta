@@ -87,6 +87,9 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Default")
 	void SetRolled(bool value);
 
+	UFUNCTION(BlueprintCallable, Category = "Default")
+	FString GetParticipantName() const { return ParticipantName; }
+
 	// --------------------------------------------------------------------------------------------
 	// PUBLIC VARIABLES
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category="Default")

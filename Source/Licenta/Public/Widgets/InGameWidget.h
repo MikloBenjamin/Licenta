@@ -19,8 +19,5 @@ protected:
 	virtual void NativeConstruct() override;
 
 	UPROPERTY(BlueprintReadWrite, meta = (BindWidget))
-	UButton* Save;
-
-	UPROPERTY(BlueprintReadWrite, meta = (BindWidget))
 	UButton* QuitGame;
 };
