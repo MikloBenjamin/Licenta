@@ -29,8 +29,8 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void CheatMove()
 	{
+		MovePawn(1);
 		MoveCamera();
-		MovePawn(30);
 	}
 	
 };

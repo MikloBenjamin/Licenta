@@ -17,7 +17,7 @@ public:
 	AElectricAndWaterWorks* Initialize(
 		const int Pos, const FString Name, const EActions Action, FString AssetPath = "", AParticipantPawn* Player = nullptr);
 
-	FString PriceToPayUtility(AParticipantPawn* PropertyOwnerParticipant, int DiceRolls);
+	FString PriceToPay(AParticipantPawn* PropertyOwnerParticipant);
 
 	FString PriceToBuy();
 

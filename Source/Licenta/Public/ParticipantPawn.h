@@ -49,6 +49,7 @@ protected:
 	float WaitTime = 0.21;
 
 public:
+	int DiceRoll = 0;
 	int JailedFor = 0;
 	// PUBLIC NON-BP FUNCTIONS
 	

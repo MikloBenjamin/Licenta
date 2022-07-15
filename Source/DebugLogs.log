@@ -1,334 +1,60 @@
 Initializing game
 Starting game
-Player Player 1 stepped on Jail
-Player Bot 1 stepped on Vermont Avenue
-BuyPropertyAI --- Bot 1 | Vermont Avenue
+Player Bot 1 stepped on Oriental Avenue
+BuyPropertyAI --- Bot 1 | Oriental Avenue
 BuyPropertyAI --- Enough money
-BuyPropertyAI --- Bot 1 | Total money: 450 > 2 * 100
-Player Bot 1 bought Vermont Avenue
-Property Vermont Avenue owner: Bot 1
+BuyPropertyAI --- Bot 1 | Total money: 950 > 2 * 100
+Player Bot 1 bought Oriental Avenue
+Property Oriental Avenue owner: Bot 1
 BuyHouseAI CanBuyHouse before while: 1
-BuyHouseAI CanBuyHouse at end of for: 0
-Player Bot 3 stepped on Chance
-Player Bot 2 stepped on Railroad South
-Player Bot 2 bought Railroad South
-Property Railroad South owner: Bot 2
-Player Player 1 stepped on Virginia Avenue
-Property Virginia Avenue has NO owner --- PLAYER: Player 1
+Player Bot 3 stepped on Railroad South
+Player Bot 3 bought Railroad South
+Property Railroad South owner: Bot 3
+Player Player 1 stepped on Jail
+Player Bot 2 stepped on Electric Company
+Player Bot 2 bought Electric Company
+Property Electric Company owner: Bot 2
 Player Bot 1 stepped on Virginia Avenue
 BuyPropertyAI --- Bot 1 | Virginia Avenue
 BuyPropertyAI --- Enough money
-BuyPropertyAI --- Bot 1 | Total money: 350 > 2 * 160
+BuyPropertyAI --- Bot 1 | Total money: 850 > 2 * 160
 Player Bot 1 bought Virginia Avenue
 Property Virginia Avenue owner: Bot 1
 BuyHouseAI CanBuyHouse before while: 1
-BuyHouseAI CanBuyHouse at end of for: 0
-Player Bot 3 stepped on Jail
-Player Bot 2 stepped on St.Charles Place
-BuyPropertyAI --- Bot 2 | St.Charles Place
+Player Bot 3 stepped on States Avenue
+BuyPropertyAI --- Bot 3 | States Avenue
 BuyPropertyAI --- Enough money
-BuyPropertyAI --- 250 > 140
-BuyPropertyAI --- Bot 2 --- 250 > 140
-Player Bot 2 bought St.Charles Place
-Property St.Charles Place owner: Bot 2
+BuyPropertyAI --- Bot 3 | Total money: 750 > 2 * 140
+Player Bot 3 bought States Avenue
+Property States Avenue owner: Bot 3
 BuyHouseAI CanBuyHouse before while: 1
-BuyHouseAI CanBuyHouse at end of for: 0
-Property Virginia Avenue owner: Bot 1
-Player Player 1 stepped on Kentucky Avenue
-Property Kentucky Avenue has NO owner --- PLAYER: Player 1
-Player Bot 1 stepped on Chance
-Player Bot 3 stepped on St.James Place
-BuyPropertyAI --- Bot 3 | St.James Place
+Player Player 1 stepped on Tennessee Avenue
+Property Tennessee Avenue has NO owner --- PLAYER: Player 1
+Player Player 1 bought Tennessee Avenue
+Property Tennessee Avenue owner: Player 1
+Propery price: 90 --- Player Money initial: 770
+Player Money After: 860
+Property Tennessee Avenue has NO owner --- PLAYER: Player 1
+Property Mediterranean Avenue owner: Player 1
+Property Baltic Avenue owner: Player 1
+Property Mediterranean Avenue owner: Player 1
+Property Mediterranean Avenue owner: Player 1
+Player Bot 2 stepped on Tennessee Avenue
+BuyPropertyAI --- Bot 2 | Tennessee Avenue
 BuyPropertyAI --- Enough money
-BuyPropertyAI --- Bot 3 | Total money: 475 > 2 * 180
-Player Bot 3 bought St.James Place
-Property St.James Place owner: Bot 3
+BuyPropertyAI --- Bot 2 | Total money: 800 > 2 * 180
+Player Bot 2 bought Tennessee Avenue
+Property Tennessee Avenue owner: Bot 2
 BuyHouseAI CanBuyHouse before while: 1
-BuyHouseAI CanBuyHouse at end of for: 0
-Player Bot 2 stepped on Kentucky Avenue
-BuyPropertyAI --- Bot 2 | Kentucky Avenue
-BuyPropertyAI --- NO MONEY
-BuyPropertyAI --- same group
-BuyPropertyAI --- same group
-BuyPropertyAI --- not same property
-BuyPropertyAI --- LastPropNeeded = 0
-Buy propertyy AI over
-BuyHouseAI CanBuyHouse before while: 1
-BuyHouseAI CanBuyHouse at end of for: 0
-Property Kentucky Avenue has NO owner --- PLAYER: Player 1
-Player Player 1 stepped on Atlantic Avenue
-Property Atlantic Avenue has NO owner --- PLAYER: Player 1
-Player Bot 1 stepped on Electric Company
-Player Bot 1 bought Electric Company
-Property Electric Company owner: Bot 1
+Player Bot 1 stepped on Free Parking
 Player Bot 3 stepped on Free Parking
-Player Bot 2 stepped on Go to Jail
-Player Bot 2 jailed, moving 20 positions
-Player Bot 2 current position 10
-Property Atlantic Avenue has NO owner --- PLAYER: Player 1
-Player Player 1 stepped on Park Palace
-Property Park Palace has NO owner --- PLAYER: Player 1
-Player Bot 1 stepped on Tennessee Avenue
-BuyPropertyAI --- Bot 1 | Tennessee Avenue
-BuyPropertyAI --- NO MONEY
-BuyPropertyAI --- same group
-BuyPropertyAI --- not same property
-BuyPropertyAI --- same group, property owner is not Bot 3
-BuyPropertyAI --- LastPropNeeded = 0
-Buy propertyy AI over
-BuyHouseAI CanBuyHouse before while: 1
-BuyHouseAI CanBuyHouse at end of for: 0
-Player Bot 3 stepped on Ventnor Avenue
-BuyPropertyAI --- Bot 3 | Ventnor Avenue
-BuyPropertyAI --- Enough money
-BuyPropertyAI --- 295 > 260
-BuyPropertyAI --- Bot 3 --- 295 > 260
-Player Bot 3 bought Ventnor Avenue
-Property Ventnor Avenue owner: Bot 3
-BuyHouseAI CanBuyHouse before while: 1
-BuyHouseAI CanBuyHouse at end of for: 0
-Player Bot 2 stepped on New York Avenue
-BuyPropertyAI --- Bot 2 | New York Avenue
-BuyPropertyAI --- NO MONEY
-BuyPropertyAI --- same group
-BuyPropertyAI --- not same property
-BuyPropertyAI --- same group, property owner is not Bot 3
-BuyPropertyAI --- LastPropNeeded = 0
-Buy propertyy AI over
-BuyHouseAI CanBuyHouse before while: 1
-BuyHouseAI CanBuyHouse at end of for: 0
-Property Park Palace has NO owner --- PLAYER: Player 1
-Player Player 1 stepped on Community Chest
-Player Bot 1 stepped on Illinois Avenue
-BuyPropertyAI --- Bot 1 | Illinois Avenue
-BuyPropertyAI --- NO MONEY
-BuyPropertyAI --- same group
-BuyPropertyAI --- not same property
-BuyPropertyAI --- LastPropNeeded = 0
-Buy propertyy AI over
-BuyHouseAI CanBuyHouse before while: 1
-BuyHouseAI CanBuyHouse at end of for: 0
-Player Bot 3 stepped on Railroad East
-Propery price: 90 --- Player Money initial: 35
-Player Money After: 125
-Propery price: 130 --- Player Money initial: 125
-Player Money After: 255
-Player Bot 3 bought Railroad East
-Property Railroad East owner: Bot 3
-Player Bot 2 stepped on Illinois Avenue
-BuyPropertyAI --- Bot 2 | Illinois Avenue
-BuyPropertyAI --- NO MONEY
-BuyPropertyAI --- same group
-BuyPropertyAI --- not same property
-BuyPropertyAI --- LastPropNeeded = 0
-Buy propertyy AI over
-BuyHouseAI CanBuyHouse before while: 1
-BuyHouseAI CanBuyHouse at end of for: 0
-Player Player 1 stepped on Railroad South
-Player Player 1 paid 25 to Bot 2
-Player: Player 1 ... OWES ... 0 ... TO ... BANK
-Property Railroad South owner: Bot 2
-Player Bot 1 stepped on North Carolina Avenue
-BuyPropertyAI --- Bot 1 | North Carolina Avenue
-BuyPropertyAI --- NO MONEY
-BuyPropertyAI --- same group
-BuyPropertyAI --- not same property
-BuyPropertyAI --- LastPropNeeded = 0
-Buy propertyy AI over
-BuyHouseAI CanBuyHouse before while: 1
-BuyHouseAI CanBuyHouse at end of for: 0
-Player Bot 3 stepped on Community Chest
-Player Bot 2 stepped on Marvin Gardens
-BuyPropertyAI --- Bot 2 | Marvin Gardens
-BuyPropertyAI --- NO MONEY
-BuyPropertyAI --- same group
-BuyPropertyAI --- not same property
-BuyPropertyAI --- LastPropNeeded = 0
-Buy propertyy AI over
-BuyHouseAI CanBuyHouse before while: 1
-BuyHouseAI CanBuyHouse at end of for: 0
-Property Railroad South owner: Bot 2
-Player Player 1 stepped on St.Charles Place
-Player Player 1 paid 10 to Bot 2
-Player: Player 1 ... OWES ... 0 ... TO ... BANK
-Property St.Charles Place owner: Bot 2
-Player Bot 1 stepped on Board Walk
-BuyPropertyAI --- Bot 1 | Board Walk
-BuyPropertyAI --- NO MONEY
-BuyPropertyAI --- same group
-BuyPropertyAI --- not same property
-BuyPropertyAI --- LastPropNeeded = 0
-Buy propertyy AI over
-BuyHouseAI CanBuyHouse before while: 1
-BuyHouseAI CanBuyHouse at end of for: 0
-Player Bot 3 stepped on Oriental Avenue
-BuyPropertyAI --- Bot 3 | Oriental Avenue
-BuyPropertyAI --- Enough money
-BuyPropertyAI --- 110 > 100
-BuyPropertyAI --- Bot 3 --- 110 > 100
-Player Bot 3 bought Oriental Avenue
-Property Oriental Avenue owner: Bot 3
-BuyHouseAI CanBuyHouse before while: 1
-BuyHouseAI CanBuyHouse at end of for: 0
-Player Bot 2 stepped on Chance
-Property St.Charles Place owner: Bot 2
-Player Player 1 stepped on Community Chest
-Player: Player 1 ... OWES ... 0 ... TO ... BANK
-Player Bot 1 stepped on Connecticut Avenue
-BuyPropertyAI --- Bot 1 | Connecticut Avenue
-BuyPropertyAI --- NO MONEY
-BuyPropertyAI --- same group
-BuyPropertyAI --- not same property
-BuyPropertyAI --- same group, property owner is not Bot 3
-BuyPropertyAI --- LastPropNeeded = 0
-Buy propertyy AI over
-BuyHouseAI CanBuyHouse before while: 1
-BuyHouseAI CanBuyHouse at end of for: 0
-Player Bot 3 stepped on St.James Place
-BuyPropertyAI --- Bot 3 | St.James Place
-BuyPropertyAI --- NO MONEY
-BuyPropertyAI --- same group
-BuyPropertyAI --- same group
-BuyPropertyAI --- not same property
-BuyPropertyAI --- LastPropNeeded = 0
-Buy propertyy AI over
-BuyHouseAI CanBuyHouse before while: 1
-BuyHouseAI CanBuyHouse at end of for: 0
-Player Bot 2 stepped on Pacific Avenue
-BuyPropertyAI --- Bot 2 | Pacific Avenue
-BuyPropertyAI --- NO MONEY
-BuyPropertyAI --- same group
-BuyPropertyAI --- same group
-BuyPropertyAI --- not same property
-BuyPropertyAI --- LastPropNeeded = 0
-Buy propertyy AI over
-BuyHouseAI CanBuyHouse before while: 1
-BuyHouseAI CanBuyHouse at end of for: 0
-Player Player 1 stepped on Water Works
-Property Water Works has NO owner --- PLAYER: Player 1
-Player Bot 1 stepped on Railroad West
-Propery price: 50 --- Player Money initial: 90
-Player Money After: 140
-Propery price: 80 --- Player Money initial: 140
-Player Money After: 220
-Player Bot 1 bought Railroad West
-Property Railroad West owner: Bot 1
-Player Bot 3 stepped on Railroad North
-Player Bot 2 stepped on Park Palace
-BuyPropertyAI --- Bot 2 | Park Palace
-BuyPropertyAI --- NO MONEY
-BuyPropertyAI --- same group
-BuyPropertyAI --- same group
-BuyPropertyAI --- not same property
-BuyPropertyAI --- LastPropNeeded = 0
-Buy propertyy AI over
-BuyHouseAI CanBuyHouse before while: 1
-BuyHouseAI CanBuyHouse at end of for: 0
-Property Water Works has NO owner --- PLAYER: Player 1
-Player Player 1 stepped on Chance
-Property St.Charles Place owner: Bot 2
-Player Bot 1 stepped on Kentucky Avenue
-BuyPropertyAI --- Bot 1 | Kentucky Avenue
-BuyPropertyAI --- NO MONEY
-BuyPropertyAI --- same group
-BuyPropertyAI --- same group
-BuyPropertyAI --- not same property
-BuyPropertyAI --- LastPropNeeded = 0
-Buy propertyy AI over
-BuyHouseAI CanBuyHouse before while: 1
-BuyHouseAI CanBuyHouse at end of for: 0
-Player Bot 3 stepped on North Carolina Avenue
-BuyPropertyAI --- Bot 3 | North Carolina Avenue
-BuyPropertyAI --- NO MONEY
-BuyPropertyAI --- same group
-BuyPropertyAI --- not same property
-BuyPropertyAI --- LastPropNeeded = 0
-Buy propertyy AI over
-BuyHouseAI CanBuyHouse before while: 1
-BuyHouseAI CanBuyHouse at end of for: 0
-Player Bot 2 stepped on Baltic Avenue
-Player Bot 2 paid 4 to Player 1
-Player: Bot 2 ... OWES ... 0 ... TO ... BANK
-Property St.Charles Place owner: Bot 2
-Player Player 1 stepped on Free Parking
-Player Bot 1 stepped on Go to Jail
-Player Bot 1 jailed, moving 20 positions
-Player Bot 1 current position 10
-Player Bot 3 stepped on Mediterranean Avenue
-Player Bot 3 paid 2 to Player 1
-Player: Bot 3 ... OWES ... 0 ... TO ... BANK
-Player Bot 2 stepped on Vermont Avenue
-BuyPropertyAI --- Bot 2 | Vermont Avenue
-BuyPropertyAI --- Enough money
-BuyPropertyAI --- 141 > 100
-BuyPropertyAI --- Bot 2 --- 141 > 100
-Player Bot 2 bought Vermont Avenue
-Property Vermont Avenue owner: Bot 2
-BuyHouseAI CanBuyHouse before while: 1
-BuyHouseAI CanBuyHouse at end of for: 0
-Player Player 1 stepped on Ventnor Avenue
-Property Ventnor Avenue has NO owner --- PLAYER: Player 1
-Player Bot 1 stepped on Community Chest
-Player Bot 3 stepped on Jail
-Player Bot 2 stepped on New York Avenue
-BuyPropertyAI --- Bot 2 | New York Avenue
-BuyPropertyAI --- NO MONEY
-BuyPropertyAI --- same group
-BuyPropertyAI --- not same property
-BuyPropertyAI --- LastPropNeeded = 0
-Buy propertyy AI over
-BuyHouseAI CanBuyHouse before while: 1
-BuyHouseAI CanBuyHouse at end of for: 0
-Property Ventnor Avenue has NO owner --- PLAYER: Player 1
-Player Player 1 stepped on North Carolina Avenue
-Property North Carolina Avenue has NO owner --- PLAYER: Player 1
-Player Bot 1 stepped on Indiana Avenue
-BuyPropertyAI --- Bot 1 | Indiana Avenue
-BuyPropertyAI --- NO MONEY
-BuyPropertyAI --- same group
-BuyPropertyAI --- not same property
-BuyPropertyAI --- LastPropNeeded = 0
-Buy propertyy AI over
-BuyHouseAI CanBuyHouse before while: 1
-BuyHouseAI CanBuyHouse at end of for: 0
-Player Bot 3 stepped on Community Chest
-Player Bot 2 stepped on Water Works
-Property North Carolina Avenue has NO owner --- PLAYER: Player 1
-Player Player 1 stepped on Luxury Tax
-Player Player 1 landed on a TAX property
-Player: Player 1 ... OWES ... 46 ... TO ... BANK
+Property Mediterranean Avenue owner: Player 1
+Property Baltic Avenue owner: Player 1
+Player Player 1 stepped on Jail
+CHEAT Rest - Total: 885, Pay: 935
+CHEAT Rest - Rest: 50
+Player: Player 1 ... OWES ... 50 ... TO ... BANK
 Propery price: 30 --- Player Money initial: 0
 Player Money After: 30
 Property Baltic Avenue has NO owner --- PLAYER: Player 1
-Propery price: 30 --- Player Money initial: 30
-Player Money After: 60
-Property Mediterranean Avenue has NO owner --- PLAYER: Player 1
-Player Player 1 stepped on Oriental Avenue
-Player Player 1 paid 6 to Bot 3
-Player: Player 1 ... OWES ... 0 ... TO ... BANK
-Property Oriental Avenue owner: Bot 3
-Player Bot 1 stepped on Go to Jail
-Player Bot 1 jailed, moving 20 positions
-Player Bot 1 current position 10
-Player Bot 3 stepped on Atlantic Avenue
-BuyPropertyAI --- Bot 3 | Atlantic Avenue
-BuyPropertyAI --- NO MONEY
-BuyPropertyAI --- same group
-BuyPropertyAI --- same group
-BuyPropertyAI --- not same property
-BuyPropertyAI --- LastPropNeeded = 0
-Buy propertyy AI over
-BuyHouseAI CanBuyHouse before while: 1
-BuyHouseAI CanBuyHouse at end of for: 0
-Player Bot 2 stepped on Pennsylvania Avenue
-BuyPropertyAI --- Bot 2 | Pennsylvania Avenue
-BuyPropertyAI --- NO MONEY
-BuyPropertyAI --- same group
-BuyPropertyAI --- not same property
-BuyPropertyAI --- LastPropNeeded = 0
-Buy propertyy AI over
-BuyHouseAI CanBuyHouse before while: 1
-BuyHouseAI CanBuyHouse at end of for: 0
-Property Oriental Avenue owner: Bot 3
-Player Player 1 stepped on St.James Place
-Property St.James Place has NO owner --- PLAYER: Player 1
+Player Rest after sell: 20

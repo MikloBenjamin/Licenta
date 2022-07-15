@@ -201,7 +201,12 @@ int AParticipantPawn::Pay(const int Amount, AParticipantPawn* To)
 	{
 		To->Receive(Amount - RestP);
 	}
-	Rest = RestP;
+	Rest = Amount - RestP;
+	if (Rest < 0)
+	{
+		Rest = 0;
+	}
+	Money->Total();
 	return RestP;
 }
 
@@ -223,12 +228,12 @@ int AParticipantPawn::Receive(int Amount) {
 
 int AParticipantPawn::Play()
 {
-	int DiceRoll = FMath::RandRange(1, 6) + FMath::RandRange(1, 6);
+	DiceRoll = FMath::RandRange(1, 6) + FMath::RandRange(1, 6);
 	if (DiceRoll == 12)
 	{
 		JailedFor = 0;
 	}
-	else if (JailedFor > 3)
+	else if (JailedFor > 0)
 	{
 		JailedFor--;
 		return DiceRoll;

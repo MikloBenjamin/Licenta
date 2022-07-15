@@ -141,6 +141,12 @@ class LICENTA_API AMP_GameMode : public AGameModeBase
 		void HandleMoneyInfo(UMoney* PlayerMoney);
 
 		UFUNCTION(BlueprintCallable, Category = "Default")
+		void ShowPropertiesRestMenu();
+
+		UFUNCTION(BlueprintCallable, Category = "Default")
+		void HidePropertiesRestMenu();
+
+		UFUNCTION(BlueprintCallable, Category = "Default")
 		void ShowPropertiesMenu();
 
 		UFUNCTION(BlueprintCallable, Category = "Default")
@@ -180,7 +186,19 @@ class LICENTA_API AMP_GameMode : public AGameModeBase
 		AMonopolyProperty* GetProperty(const int Position);
 
 		UFUNCTION(BlueprintCallable, Category = "Default")
-		void CHEAT();
+		void CHEAT_BuyHouse();
+
+		UFUNCTION(BlueprintCallable, Category = "Default")
+		void CHEAT_Rest();
+
+		UFUNCTION(BlueprintCallable, Category = "Default")
+		void CHEAT_Win();
+
+		UFUNCTION(BlueprintCallable, Category = "Default")
+		void CHEAT_Lose();
+
+		UFUNCTION(BlueprintCallable, Category = "Default")
+		void Lose();
 
 		UFUNCTION(BlueprintCallable, Category = "Default")
 		void CalculateCanBuySellHouseOrProperty();

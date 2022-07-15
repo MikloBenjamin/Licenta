@@ -12,9 +12,9 @@ AElectricAndWaterWorks* AElectricAndWaterWorks::Initialize(
 	return this;
 }
 
-FString AElectricAndWaterWorks::PriceToPayUtility(AParticipantPawn* PropertyOwnerParticipant, int DiceRolls)
+FString AElectricAndWaterWorks::PriceToPay(AParticipantPawn* PropertyOwnerParticipant)
 {
-	return UKismetTextLibrary::Conv_TextToString(UKismetTextLibrary::Conv_IntToText(DiceRolls * (PropertyOwnerParticipant->UtilitiesOwned < 2 ? 4 : 10)));
+	return UKismetTextLibrary::Conv_TextToString(UKismetTextLibrary::Conv_IntToText(PropertyOwnerParticipant->DiceRoll * (PropertyOwnerParticipant->UtilitiesOwned < 2 ? 4 : 10)));
 }
 
 FString AElectricAndWaterWorks::PriceToBuy()
